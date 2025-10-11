@@ -1,14 +1,4 @@
 class StickyNavigation {
-
-    // Simple parallax effect
-$(window).on('scroll', function() {
-  const scrollTop = $(window).scrollTop();
-  const $hero = $('.et-hero-tabs');
-
-  // Move background at 50% scroll speed
-  $hero.css('background-position', 'center ' + (scrollTop * 0.5) + 'px');
-});
-
   constructor() {
     this.currentId = null;
     this.currentTab = null;
@@ -25,6 +15,12 @@ $(window).on('scroll', function() {
 
     this.findCurrentTabSelector();
     this.setSliderCss();
+
+    // Parallax effect
+    $(window).on('scroll', function() {
+      const scrollTop = $(window).scrollTop();
+      $('.et-hero-tabs').css('background-position', 'center ' + (scrollTop * 0.5) + 'px');
+    });
   }
 
   onTabClick(event, $element) {
