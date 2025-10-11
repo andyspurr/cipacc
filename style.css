@@ -14,12 +14,12 @@ h1, h3 { margin: 0.4em 0; }
   background-position: center center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; /* push top and bottom apart */
   align-items: center;
   color: white;
   text-align: center;
   overflow: hidden;
-  padding-top: 5em; /* heading ~5 lines from top */
+  padding: 5em 0; /* space at top/bottom */
 }
 
 /* Dark overlay */
@@ -31,55 +31,39 @@ h1, h3 { margin: 0.4em 0; }
   z-index: 0;
 }
 
+/* Top heading */
 .et-hero-heading {
   position: relative;
   z-index: 1;
 }
 
-/* Tabs container now includes h3 */
-.et-hero-tabs-container {
-  position: relative; /* no longer absolute */
-  display: flex;
-  flex-direction: column; /* h3 above menu */
-  align-items: center;
-  padding: 12px 0;
-  background: rgba(255,255,255,0.95);
-  z-index: 5;
+/* Bottom footer: h3 + menu */
+.et-hero-footer {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px; /* distance from bottom of hero */
 }
 
-/* Subheading */
-.et-hero-subheading {
-  color: #333;
-  font-size: 1.2rem;
-  margin-bottom: 8px; /* space above tabs */
+/* Hero heading */
+.et-hero-tabs h1 {
+  font-size: 4rem;
+  color: #003366;
+  font-weight: bold;
+  margin: 0.2em 0;
 }
 
-/* Tabs */
-.et-hero-tab {
-  text-decoration: none;
-  color: #333;
-  padding: 8px 12px;
-  display: inline-block;
-  margin: 0 4px;
-  transition: color 0.2s;
+/* Hero subheading */
+.et-hero-tabs h3 {
+  font-size: 1.5rem;
+  color: #ffffffcc;
+  margin: 0 0 0.5em 0; /* small margin above menu */
 }
 
-/* Slider */
-.et-hero-tab-slider {
-  position: absolute;
-  bottom: 0;
-  height: 3px;
-  background: #0077cc;
-  transition: left 0.25s ease, width 0.25s ease;
-  left: 0;
-  width: 0;
-}
-
-/* Responsive */
+/* Optional responsive */
 @media (max-width: 768px) {
   .et-hero-tabs h1 { font-size: 2.5rem; }
-  .et-hero-subheading { font-size: 1rem; }
-  .et-hero-tabs { padding-top: 3em; }
+  .et-hero-tabs h3 { font-size: 1.2rem; }
+  .et-hero-tabs { padding: 3em 0; }
 }
 
 /* ===== TAB CONTAINER ===== */
