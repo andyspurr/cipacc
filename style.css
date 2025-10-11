@@ -8,21 +8,21 @@ h1, h3 { margin: 0.4em 0; }
 /* ===== HERO SECTION ===== */
 .et-hero-tabs {
   position: relative;
-  height: 100vh;
+  height: 100vh; /* full viewport height */
   background-image: url('images/2018team.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: column; /* stack content vertically */
+  justify-content: flex-end; /* push menu to bottom */
   align-items: center;
   color: white;
   text-align: center;
   overflow: hidden;
 }
 
-/* Dark overlay for better text visibility */
+/* Optional dark overlay for better text visibility */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -32,7 +32,10 @@ h1, h3 { margin: 0.4em 0; }
 }
 
 .et-hero-content {
-  position: relative;
+  position: absolute; /* allow text to float above menu */
+  top: 50%;           /* vertically center text */
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1;
 }
 
