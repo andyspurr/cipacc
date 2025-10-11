@@ -50,7 +50,7 @@ h1, h3 { margin: 0.4em 0; }
 .et-hero-tabs h3 {
   font-size: 1.5rem;
   color: #ffffffcc; /* slightly transparent white */
-  margin-top: 0.5em;
+  margin: 0;
 }
 
 /* Optional responsive */
