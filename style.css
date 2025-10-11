@@ -8,63 +8,96 @@ h1, h3 { margin: 0.4em 0; }
 /* ===== HERO SECTION ===== */
 .et-hero-tabs {
   position: relative;
-  height: 100vh; /* fill viewport */
+  height: 100vh;
   background-image: url('images/2018team.jpg');
   background-size: cover;
   background-position: center center;
-  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* space: heading top, menu bottom */
+  justify-content: space-between; /* top heading + bottom section */
   align-items: center;
-  color: white;
   text-align: center;
   overflow: hidden;
-  padding-top: 5em; /* pushes content ~5 lines from top */
+  padding-top: 5em; /* h1 offset from top */
 }
 
-/* Dark overlay */
+/* Overlay */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top:0; left:0; right:0; bottom:0;
   background: rgba(0,0,0,0.5);
   z-index: 0;
 }
 
-.et-hero-content {
+/* Heading at top */
+.et-hero-tabs h1 {
+  font-size: 4rem;
+  color: #003366;
+  font-weight: bold;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Bottom section */
+.et-hero-bottom {
   position: relative;
   z-index: 1;
   text-align: center;
+  margin-bottom: 20px; /* offset from bottom of hero */
 }
 
-/* Hero heading */
-.et-hero-tabs h1 {
-  font-size: 4rem;    /* large */
-  color: #003366;     /* dark blue */
-  font-weight: bold;
-  margin: 0.2em 0;
+/* Subheading just above menu */
+.et-hero-subheading {
+  color: #ffffffcc;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
 }
 
-/* Hero subheading */
-.et-hero-tabs h3 {
-  font-size: 1.5rem;
-  color: #ffffffcc; /* slightly transparent white */
-  margin-top: 0.5em;
+/* Menu container: horizontal flex row */
+.et-hero-tabs-container {
+  display: flex;
+  flex-direction: row; /* horizontal tabs */
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 6px;
+  position: relative;
+  z-index: 5;
 }
 
-/* Optional responsive */
+/* Individual tabs */
+.et-hero-tab {
+  text-decoration: none;
+  color: #333;
+  padding: 8px 12px;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.et-hero-tab:hover,
+.et-hero-tab.active {
+  color: #0077cc;
+}
+
+/* Slider */
+.et-hero-tab-slider {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: #0077cc;
+  transition: left 0.25s ease, width 0.25s ease;
+  left: 0;
+  width: 0;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .et-hero-tabs {
-    padding-top: 3em;
-  }
-  .et-hero-tabs h1 {
-    font-size: 2.5rem;
-  }
-  .et-hero-tabs h3 {
-    font-size: 1.2rem;
-  }
-}
+  .et-hero-tabs h1 { font-size: 2.5rem; }
+  .et-hero-subheading { f
+
 
 /* ===== TAB CONTAINER ===== */
 .et-hero-tabs-container {
