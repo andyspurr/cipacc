@@ -1,7 +1,10 @@
 /* ===== BASE STYLES ===== */
-body {
+html, body {
   margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 h1, h3 { margin: 0.4em 0; }
 
@@ -14,15 +17,13 @@ h1, h3 { margin: 0.4em 0; }
   background-position: center center;
   background-repeat: no-repeat;
   display: flex;
-  flex-direction: column; /* stack content vertically */
-  justify-content: flex-end; /* push menu to bottom */
+  flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
   color: white;
   text-align: center;
-  overflow: hidden;
 }
 
-/* Optional dark overlay for better text visibility */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -32,13 +33,12 @@ h1, h3 { margin: 0.4em 0; }
 }
 
 .et-hero-content {
-  position: absolute; /* allow text to float above menu */
-  top: 50%;           /* vertically center text */
+  position: absolute;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
 }
-
 
 /* ===== TAB CONTAINER ===== */
 .et-hero-tabs-container {
@@ -59,7 +59,6 @@ h1, h3 { margin: 0.4em 0; }
 .et-hero-tabs-container--top {
   position: fixed;
   top: 0;
-  bottom: auto;
   left: 0;
   right: 0;
   background: white;
@@ -93,15 +92,6 @@ h1, h3 { margin: 0.4em 0; }
   padding: 0 20px;
 }
 
-/* First main section fills viewport minus menu */
-#tab-fixtures {
-  min-height: calc(100vh - 70px); /* adjust 70px to match menu height */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Other sections scroll normally */
 .et-slide {
   min-height: 600px;
   padding: 40px;
