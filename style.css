@@ -14,15 +14,15 @@ h1, h3 { margin: 0.4em 0; }
   background-position: center center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; /* top heading & bottom footer */
   align-items: center;
   color: white;
   text-align: center;
   overflow: hidden;
-  padding-top: 5em; /* heading ~5 lines from top */
+  padding: 5em 0; /* top padding for heading */
 }
 
-/* Dark overlay */
+/* Overlay */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -31,36 +31,48 @@ h1, h3 { margin: 0.4em 0; }
   z-index: 0;
 }
 
+/* Top heading */
 .et-hero-heading {
   position: relative;
   z-index: 1;
 }
 
-/* Tabs container now includes h3 */
-.et-hero-tabs-container {
-  position: relative; /* no longer absolute */
+/* Bottom footer: subheading + menu */
+.et-hero-tabs-footer {
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex-direction: column; /* h3 above menu */
+  flex-direction: column; /* stack subheading above menu */
   align-items: center;
-  padding: 12px 0;
-  background: rgba(255,255,255,0.95);
-  z-index: 5;
+  margin-bottom: 20px; /* distance from bottom of hero */
 }
 
-/* Subheading */
+/* Subheading above tabs */
 .et-hero-subheading {
   color: #333;
   font-size: 1.2rem;
-  margin-bottom: 8px; /* space above tabs */
+  margin-bottom: 8px; /* spacing above tabs */
 }
 
-/* Tabs */
+/* Tabs row */
+.et-hero-tabs-container {
+  display: flex;
+  flex-direction: row; /* horizontal tabs */
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  background: rgba(255,255,255,0.95);
+  padding: 6px 0;
+  width: fit-content;
+  border-radius: 4px;
+}
+
+/* Individual tabs */
 .et-hero-tab {
   text-decoration: none;
   color: #333;
   padding: 8px 12px;
   display: inline-block;
-  margin: 0 4px;
   transition: color 0.2s;
 }
 
@@ -73,6 +85,14 @@ h1, h3 { margin: 0.4em 0; }
   transition: left 0.25s ease, width 0.25s ease;
   left: 0;
   width: 0;
+}
+
+/* Hero heading */
+.et-hero-tabs h1 {
+  font-size: 4rem;
+  color: #003366;
+  font-weight: bold;
+  margin: 0.2em 0;
 }
 
 /* Responsive */
