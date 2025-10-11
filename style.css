@@ -69,12 +69,31 @@ h1, h3 { margin: 0.4em 0; }
 /* ===== TABS ===== */
 .et-hero-tab {
   text-decoration: none;
-  color: #333;
-  padding: 8px 6px;
+  color: #333;          /* same text color for all tabs */
+  padding: 8px 12px;    /* same spacing */
   display: inline-block;
-  transition: color 0.2s;
+  transition: color 0.2s, background 0.2s;
+  position: relative;
 }
-.et-hero-tab:hover { color: #0077cc; }
+
+/* Optional: active/focus/hover highlight */
+.et-hero-tab:hover,
+.et-hero-tab.active {
+  color: #0077cc;
+}
+
+/* Slider bar */
+.et-hero-tab-slider {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: #0077cc;
+  transition: left 0.25s ease, width 0.25s ease;
+  left: 0;
+  width: 0;
+  z-index: 2;
+}
+
 
 /* ===== SLIDER BAR ===== */
 .et-hero-tab-slider {
@@ -90,14 +109,6 @@ h1, h3 { margin: 0.4em 0; }
 /* ===== MAIN CONTENT ===== */
 .et-main {
   padding: 0 20px;
-}
-
-/* First main section fills viewport minus menu */
-#tab-fixtures {
-  min-height: calc(100vh - 70px); /* adjust 70px to match menu height */
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 /* Other sections scroll normally */
