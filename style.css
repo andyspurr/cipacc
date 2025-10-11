@@ -14,29 +14,15 @@ h1, h3 { margin: 0.4em 0; }
   background-position: center center;
   background-repeat: no-repeat;
   display: flex;
-  flex-direction: column; /* stack content vertically */
-  justify-content: flex-end; /* push menu to bottom */
+  flex-direction: column; /* stack heading and menu */
+  justify-content: flex-start; /* start from top */
   align-items: center;
   color: white;
   text-align: center;
   overflow: hidden;
 }
-.et-hero-tabs h1 {
-  margin-top: 5em;       /* roughly 5 lines down */
-  font-size: 4rem;       /* increase size, adjust as needed */
-  color:rgba(0, 31, 59, 1);        /* dark blue */
-  text-align: center;
-  position: relative;    /* ensure it layers above overlay */
-  z-index: 1;
-}
-.et-hero-tabs h3 {
-        font-size: 1rem;
-        letter-spacing: 0.3rem;
-        opacity: 0.3;
-			position: absolute;
-  bottom: 10em; /* Ten lines up from the bottom */
-    }
-/* Optional dark overlay for better text visibility */
+
+/* Dark overlay */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -45,12 +31,29 @@ h1, h3 { margin: 0.4em 0; }
   z-index: 0;
 }
 
+/* Hero content (remove absolute centering) */
 .et-hero-content {
-  position: absolute; /* allow text to float above menu */
-  top: 50%;           /* vertically center text */
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 1;
+  padding-top: 5em; /* push ~5 lines from top */
+}
+
+/* Hero heading */
+.et-hero-tabs h1 {
+  font-size: 4rem;    /* large */
+  color: #003366;     /* dark blue */
+  font-weight: bold;
+  margin: 0.5em 0;
+}
+
+/* Optional responsive */
+@media (max-width: 768px) {
+  .et-hero-tabs h1 {
+    font-size: 2.5rem;
+  }
+  .et-hero-content {
+    padding-top: 3em;
+  }
 }
 
 /* ===== TAB CONTAINER ===== */
