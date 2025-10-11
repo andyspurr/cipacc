@@ -15,7 +15,10 @@ a {
 	padding-top: 100px;
     height: 100vh;
     position: relative;
-    background: #eee;
+    background-image: url('images/2018team.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 500px;
 		text-align: center;
 		padding: 0 2em;
     h1 {
