@@ -80,10 +80,18 @@ h1,h3 { margin:0.4em 0; }
 }
 
 /* ===== MAIN CONTENT ===== */
-.et-main { padding: 40px 20px; }
-.et-slide {
-  min-height: 600px;
-  padding: 40px;
-  border-bottom: 1px solid #eee;
+.et-main {
+  padding: 0 20px; /* optional side padding */
 }
+
+/* Make each main section at least full viewport height */
+.et-slide {
+  min-height: calc(100vh - 70px); /* 70px = height of sticky menu */
+  padding: 40px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .et-slide:nth-child(even) { background: #fafafa; }
