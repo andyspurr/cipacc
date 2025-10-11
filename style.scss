@@ -11,7 +11,17 @@ background-image: url('images/2018team.jpg');
   background-size: cover;
   background-position: center;
   height: 500px;
-  h1 {
+
+}
+.et-hero-tabs,
+.et-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	padding-top: 100px;
+    height: 100vh;
+    position: relative;
+      h1 {
       color: rgba(0, 31, 59, 1);  
 			font-size: 2rem;
         margin: 0;
@@ -24,19 +34,26 @@ background-image: url('images/2018team.jpg');
 			position: absolute;
   bottom: 10em; /* Ten lines up from the bottom */
     }
-}
-.et-hero-tabs,
-.et-slide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-	padding-top: 100px;
-    height: 100vh;
-    position: relative;
-    
 		text-align: center;
 		padding: 0 2em;
     
+}
+.et-hero-tabs-container {
+  display: flex;
+  justify-content: center;
+  background: white;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.et-hero-tabs-container--top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
 }
 
 .et-hero-tabs-container {
