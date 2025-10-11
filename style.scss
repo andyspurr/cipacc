@@ -42,17 +42,13 @@ background-image: url('images/2018team.jpg');
 
 
 .et-hero-tabs-container {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 70px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    background: #07d3a9;
-    z-index: 10;
-   
+  display: flex;
+  justify-content: center;
+  background: white;
+  transition: all 0.3s ease;
+  z-index: 10;
 }
+
 .et-hero-tabs-container--top {
   position: fixed;
   top: 0;
