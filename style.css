@@ -19,7 +19,6 @@ h1,h3 { margin:0.4em 0; }
   overflow: hidden;
 }
 
-
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -43,7 +42,7 @@ h1,h3 { margin:0.4em 0; }
   justify-content: center;
   gap: 20px;
   padding: 12px 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(5, 224, 198, 0.95);
   transition: box-shadow 0.2s;
   z-index: 5;
 }
