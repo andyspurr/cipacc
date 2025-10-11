@@ -4,13 +4,21 @@ h1,h3 { margin:0.4em 0; }
 
 /* ===== HERO SECTION ===== */
 .et-hero-tabs {
-  padding: 60px 20px;
-  text-align: center;
+  position: relative;
+  height: 100vh; /* fill the screen */
   background-image: url('images/2018team.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  overflow: hidden;
 }
+
 
 /* ===== TAB CONTAINER ===== */
 .et-hero-tabs-container {
