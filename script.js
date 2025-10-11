@@ -91,11 +91,17 @@ class StickyNavigation {
       }
     });
 
-    if (this.currentId !== newCurrentId) {
-      this.currentId = newCurrentId;
-      this.currentTab = newCurrentTab;
-      this.setSliderCss();
-    }
+   if (this.currentId !== newCurrentId) {
+  this.currentId = newCurrentId;
+  this.currentTab = newCurrentTab;
+
+  // Highlight the current tab
+  this.$tabs.removeClass('active');
+  if (this.currentTab) this.currentTab.addClass('active');
+
+  this.setSliderCss();
+}
+
   }
 
   // Move slider under active tab
