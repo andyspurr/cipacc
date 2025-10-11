@@ -8,13 +8,13 @@ class StickyNavigation {
     this.tabContainerHeight = this.$tabContainer.outerHeight() || 70;
     this.placeholder = $('<div class="et-hero-tabs-placeholder"></div>');
 
-    // Event bindings
+    // Bind events
     const self = this;
     this.$tabs.on('click', function(e) { self.onTabClick(e, $(this)); });
     $(window).on('scroll', () => this.onScroll());
     $(window).on('resize', () => this.onResize());
 
-    // Initialize slider and current tab
+    // Initialize slider and active tab
     this.findCurrentTabSelector();
     this.setSliderCss();
 
@@ -25,7 +25,7 @@ class StickyNavigation {
     });
   }
 
-  // Scroll smoothly to the section
+  // Smooth scroll to section
   onTabClick(event, $element) {
     event.preventDefault();
     const target = $($element.attr('href'));
@@ -35,13 +35,13 @@ class StickyNavigation {
     $('html, body').animate({ scrollTop: scrollTop }, 600);
   }
 
-  // On window scroll
+  // Handle window scroll
   onScroll() {
     this.checkTabContainerPosition();
     this.findCurrentTabSelector();
   }
 
-  // On window resize
+  // Handle window resize
   onResize() {
     this.tabContainerHeight = this.$tabContainer.outerHeight();
     this.setSliderCss();
@@ -70,7 +70,7 @@ class StickyNavigation {
     }
   }
 
-  // Update which tab is active based on scroll
+  // Find currently visible section and update active tab
   findCurrentTabSelector() {
     let newCurrentId = null;
     let newCurrentTab = null;
@@ -91,17 +91,16 @@ class StickyNavigation {
       }
     });
 
-   if (this.currentId !== newCurrentId) {
-  this.currentId = newCurrentId;
-  this.currentTab = newCurrentTab;
+    if (this.currentId !== newCurrentId) {
+      this.currentId = newCurrentId;
+      this.currentTab = newCurrentTab;
 
-  // Highlight the current tab
-  this.$tabs.removeClass('active');
-  if (this.currentTab) this.currentTab.addClass('active');
+      // Update active tab class
+      this.$tabs.removeClass('active');
+      if (this.currentTab) this.currentTab.addClass('active');
 
-  this.setSliderCss();
-}
-
+      this.setSliderCss();
+    }
   }
 
   // Move slider under active tab
