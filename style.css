@@ -21,7 +21,21 @@ h1, h3 { margin: 0.4em 0; }
   text-align: center;
   overflow: hidden;
 }
-
+.et-hero-tabs h1 {
+  margin-top: 5em;       /* roughly 5 lines down */
+  font-size: 4rem;       /* increase size, adjust as needed */
+  color:rgba(0, 31, 59, 1);        /* dark blue */
+  text-align: center;
+  position: relative;    /* ensure it layers above overlay */
+  z-index: 1;
+}
+.et-hero-tabs h3 {
+        font-size: 1rem;
+        letter-spacing: 0.3rem;
+        opacity: 0.3;
+			position: absolute;
+  bottom: 10em; /* Ten lines up from the bottom */
+    }
 /* Optional dark overlay for better text visibility */
 .et-hero-tabs::before {
   content: "";
