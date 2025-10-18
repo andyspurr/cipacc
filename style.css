@@ -10,7 +10,7 @@ h1 {
   font-style: italic;
   letter-spacing: 0.35em; /* adjust for more or less spacing */
   font-weight: 400;
-  font-size: 2em;
+  font-size: 1.7em;
 }
 
 h2 {
@@ -22,7 +22,7 @@ h2 {
   margin: 0;
   padding-top: 60px; /* spacing from top of section */
   color: #222;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 h3 {
