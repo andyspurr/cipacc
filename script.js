@@ -8,24 +8,21 @@ class StickyNavigation {
     this.tabContainerHeight = this.$tabContainer.outerHeight() || 70;
     this.placeholder = $('<div class="et-hero-tabs-placeholder"></div>');
 
-    // Bind events
     const self = this;
     this.$tabs.on('click', function(e) { self.onTabClick(e, $(this)); });
     $(window).on('scroll', () => this.onScroll());
     $(window).on('resize', () => this.onResize());
 
-    // Initialize slider and active tab
     this.findCurrentTabSelector();
     this.setSliderCss();
 
-    // Parallax background effect
+    // Parallax effect for hero background
     $(window).on('scroll', function() {
       const scrollTop = $(window).scrollTop();
       $('.et-hero-tabs').css('background-position', 'center ' + (scrollTop * 0.5) + 'px');
     });
   }
 
-  // Smooth scroll to section
   onTabClick(event, $element) {
     event.preventDefault();
     const target = $($element.attr('href'));
@@ -35,26 +32,23 @@ class StickyNavigation {
     $('html, body').animate({ scrollTop: scrollTop }, 600);
   }
 
-  // Handle window scroll
   onScroll() {
     this.checkTabContainerPosition();
     this.findCurrentTabSelector();
   }
 
-  // Handle window resize
   onResize() {
     this.tabContainerHeight = this.$tabContainer.outerHeight();
     this.setSliderCss();
   }
 
-  // Stick menu to top when scrolling past hero
   checkTabContainerPosition() {
     const $hero = $('.et-hero-tabs');
     const offset = $hero.offset().top + $hero.outerHeight() - this.tabContainerHeight;
 
     if ($(window).scrollTop() > offset) {
       if (!this.$tabContainer.hasClass('et-hero-tabs-container--top')) {
-        this.placeholder.height(this.$tabContainer.outerHeight());
+        this.placeholder.height(this.tabContainerHeight);
         $hero.after(this.placeholder);
         this.$tabContainer.addClass('et-hero-tabs-container--top');
         this.$tabContainer.css({ width: '100%' });
@@ -70,7 +64,6 @@ class StickyNavigation {
     }
   }
 
-  // Find currently visible section and update active tab
   findCurrentTabSelector() {
     let newCurrentId = null;
     let newCurrentTab = null;
@@ -95,7 +88,7 @@ class StickyNavigation {
       this.currentId = newCurrentId;
       this.currentTab = newCurrentTab;
 
-      // Update active tab class
+      // Update active class
       this.$tabs.removeClass('active');
       if (this.currentTab) this.currentTab.addClass('active');
 
@@ -103,10 +96,8 @@ class StickyNavigation {
     }
   }
 
-  // Move slider under active tab
   setSliderCss() {
     let width = 0, left = 0;
-
     if (this.currentTab && this.currentTab.length) {
       width = this.currentTab.outerWidth();
       left = this.currentTab.offset().left - this.$tabContainer.offset().left;
@@ -117,12 +108,10 @@ class StickyNavigation {
         left = $first.offset().left - this.$tabContainer.offset().left;
       }
     }
-
     this.$slider.css({ width: width + 'px', left: left + 'px' });
   }
 }
 
-// Initialize the sticky menu once DOM is ready
 $(document).ready(function() {
   new StickyNavigation();
 });
