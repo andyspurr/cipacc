@@ -8,8 +8,8 @@ body {
 h1 {
   font-family: "Bodoni Moda", serif;
   font-style: italic;
-  letter-spacing: 0.15em; /* adjust for more or less spacing */
-  font-weight: 600;
+  letter-spacing: 0.35em; /* adjust for more or less spacing */
+  font-weight: 800;
 }
 
 h3 {
