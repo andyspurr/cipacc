@@ -112,6 +112,44 @@ class StickyNavigation {
   }
 }
 
+// ===== SORTABLE STATS TABLE =====
 $(document).ready(function() {
   new StickyNavigation();
+
+  const table = document.getElementById('stats-table');
+  const headers = table.querySelectorAll('th');
+  let sortDirection = 1; // 1 = ascending, -1 = descending
+
+  headers.forEach((header, index) => {
+    header.addEventListener('click', () => {
+      const type = header.getAttribute('data-type');
+      const rows = Array.from(table.querySelectorAll('tbody tr'));
+      const currentIsAscending = header.classList.contains('asc');
+
+      // Remove arrows from all headers
+      headers.forEach(h => h.classList.remove('asc', 'desc'));
+
+      // Toggle direction
+      header.classList.toggle('asc', !currentIsAscending);
+      header.classList.toggle('desc', currentIsAscending);
+      sortDirection = currentIsAscending ? -1 : 1;
+
+      // Sort rows
+      rows.sort((a, b) => {
+        const aText = a.children[index].innerText.trim();
+        const bText = b.children[index].innerText.trim();
+
+        if (type === 'number') {
+          return sortDirection * (parseFloat(aText) - parseFloat(bText));
+        } else {
+          return sortDirection * aText.localeCompare(bText);
+        }
+      });
+
+      // Reattach sorted rows
+      const tbody = table.querySelector('tbody');
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
 });
+

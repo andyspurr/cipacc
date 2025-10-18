@@ -148,3 +148,100 @@ a {
 .et-slide h1 {
   color: #222;
 }
+/* ===== STATS TABLE ===== */
+.stats-table-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 40px auto;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  background: white;
+}
+
+#stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+#stats-table thead {
+  background: #f7f7f7;
+}
+
+#stats-table th, #stats-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+#stats-table th {
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #222;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+#stats-table th:hover {
+  background: #e8f2fc;
+  color: #0077cc;
+}
+
+#stats-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+#stats-table tr:hover {
+  background: #f0f8ff;
+}
+
+/* Sort arrow indicators */
+#stats-table th.asc::after {
+  content: "▲";
+  position: absolute;
+  right: 10px;
+  font-size: 0.75em;
+}
+#stats-table th.desc::after {
+  content: "▼";
+  position: absolute;
+  right: 10px;
+  font-size: 0.75em;
+}
+/* ===== STICKY FILTER BAR ===== */
+.stats-filter-container {
+  position: sticky;
+  top: 70px; /* Adjust to match your menu height */
+  z-index: 5;
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  background: #fff;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#stats-filter {
+  width: 250px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+#stats-filter:focus {
+  border-color: #0077cc;
+  outline: none;
+  box-shadow: 0 0 6px rgba(0,119,204,0.3);
+}

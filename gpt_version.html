@@ -26,7 +26,38 @@
 
 <main class="et-main">
   <section class="et-slide" id="tab-fixtures"><h2>Fixtures</h2></section>
-  <section class="et-slide" id="tab-results"><h2>Results</h2></section>
+  <section class="et-slide" id="tab-results">
+    <h2>Results</h2>
+    <section class="et-slide" id="tab-stats">
+  <h2>Player Statistics</h2>
+
+  <!-- Filter Bar -->
+  <div class="stats-filter-container">
+    <input type="text" id="stats-filter" placeholder="Search player..." />
+  </div>
+
+  <!-- Table -->
+  <div class="stats-table-container">
+    <table id="stats-table">
+      <thead>
+        <tr>
+          <th data-type="string">Player</th>
+          <th data-type="number">Matches</th>
+          <th data-type="number">Runs</th>
+          <th data-type="number">Wickets</th>
+          <th data-type="number">Catches</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>John Smith</td><td>10</td><td>430</td><td>5</td><td>3</td></tr>
+        <tr><td>Mark Lee</td><td>8</td><td>270</td><td>12</td><td>4</td></tr>
+        <tr><td>David Brown</td><td>12</td><td>510</td><td>7</td><td>5</td></tr>
+        <tr><td>Alex Patel</td><td>9</td><td>355</td><td>3</td><td>2</td></tr>
+        <tr><td>Chris Green</td><td>11</td><td>290</td><td>15</td><td>6</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
   <section class="et-slide" id="tab-stats"><h2>Stats</h2></section>
   <section class="et-slide" id="tab-about"><h2>About</h2></section>
   <section class="et-slide" id="tab-other"><h2>Other</h2></section>
