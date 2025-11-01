@@ -201,7 +201,7 @@ document.getElementById('back-to-table').addEventListener('click', () => {
   document.getElementById('player-detail-view').classList.add('hidden');
   document.getElementById('stats-view').classList.remove('hidden');
 });
-// ===== RESULTS TABLE YEAR FILTER =====
+
 document.addEventListener('DOMContentLoaded', function () {
   const resultsTable = document.getElementById('results-table');
   const resultsSelect = document.getElementById('results-season-select');
@@ -211,16 +211,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const rows = Array.from(resultsTable.querySelectorAll('tbody tr'));
   const yearSet = new Set();
 
-  // Collect available years from the "Season" column (last cell)
+ // ===== Results season filter =====
+  // Extract years from the first column (Date)
   rows.forEach(row => {
-    const seasonCell = row.cells[row.cells.length - 1];
-    if (seasonCell) {
-      const year = seasonCell.textContent.trim();
-      if (year) yearSet.add(year);
-    }
+    const dateText = row.cells[0].textContent.trim();
+    const year = dateText.split('-')[0]; // YYYY-MM-DD → YYYY
+    if (year) yearSet.add(year);
   });
 
-  // Populate dropdown with unique years
+  // Populate dropdown with unique years (newest first)
   Array.from(yearSet).sort((a, b) => b - a).forEach(year => {
     const opt = document.createElement('option');
     opt.value = year;
@@ -228,16 +227,12 @@ document.addEventListener('DOMContentLoaded', function () {
     resultsSelect.appendChild(opt);
   });
 
-  // Filter function
+  // Filter rows when selecting a year
   resultsSelect.addEventListener('change', e => {
     const selectedYear = e.target.value;
     rows.forEach(row => {
-      const year = row.cells[row.cells.length - 1].textContent.trim();
-      if (selectedYear === 'all' || year === selectedYear) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+      const rowYear = row.cells[0].textContent.trim().split('-')[0];
+      row.style.display = selectedYear === 'all' || rowYear === selectedYear ? '' : 'none';
     });
   });
 });
