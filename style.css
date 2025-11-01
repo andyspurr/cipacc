@@ -361,6 +361,12 @@ a {
   background: #f0f8ff;
 }
 
+.results-chart-container {
+  width: 90%;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
 
 /* ===== STICKY FILTER BAR ===== */
 .stats-filter-container {

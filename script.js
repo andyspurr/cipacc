@@ -236,3 +236,66 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+// ===== PIE CHART FOR RESULTS =====
+let resultsChart;
+
+// Function to count wins/losses/ties
+function getResultsCounts(rows, selectedYear) {
+  let wins = 0, losses = 0, ties = 0;
+
+  rows.forEach(row => {
+    const rowDate = row.cells[0].textContent.trim();
+    const rowYear = rowDate.split('-')[0];
+
+    if (selectedYear === 'all' || rowYear === selectedYear) {
+      const result = row.cells[3].textContent.trim().toLowerCase(); // Result column
+      if (result === 'win') wins++;
+      else if (result === 'loss') losses++;
+      else if (result === 'tie') ties++;
+    }
+  });
+
+  return [wins, losses, ties];
+}
+
+// Function to create or update chart
+function updateResultsChart(selectedYear) {
+  const counts = getResultsCounts(rows, selectedYear);
+
+  if (!resultsChart) {
+    const ctx = document.getElementById('results-pie-chart').getContext('2d');
+    resultsChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Wins', 'Losses', 'Ties'],
+        datasets: [{
+          data: counts,
+          backgroundColor: ['#4caf50', '#f44336', '#ffc107']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  } else {
+    resultsChart.data.datasets[0].data = counts;
+    resultsChart.update();
+  }
+}
+
+// Initialize chart on page load
+updateResultsChart('all');
+
+// Update chart whenever season is changed
+resultsSelect.addEventListener('change', e => {
+  const selectedYear = e.target.value;
+  rows.forEach(row => {
+    const rowYear = row.cells[0].textContent.trim().split('-')[0];
+    row.style.display = selectedYear === 'all' || rowYear === selectedYear ? '' : 'none';
+  });
+  updateResultsChart(selectedYear);
+});
+
