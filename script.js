@@ -165,24 +165,35 @@ $(document).ready(function () {
     }
   });
 });
-// ===== ROW CLICK TO DETAIL VIEW =====
+// ===== ROW CLICK TO DETAIL VIEW (Expanded Version) =====
 document.querySelectorAll('#stats-table tbody tr').forEach(row => {
   row.addEventListener('click', () => {
-    const player = row.dataset.player;
-    const matches = row.dataset.matches;
-    const runs = row.dataset.runs;
-    const wickets = row.dataset.wickets;
+    const data = row.dataset;
 
-    // Fill in details
-    document.getElementById('player-name').textContent = player;
-    document.getElementById('detail-matches').textContent = matches;
-    document.getElementById('detail-runs').textContent = runs;
-    document.getElementById('detail-wickets').textContent = wickets;
+    document.getElementById('player-name').textContent = data.player || 'Unknown Player';
+    document.getElementById('detail-matches').textContent = data.matches || '-';
+    document.getElementById('detail-runs').textContent = data.runs || '-';
+    document.getElementById('detail-wickets').textContent = data.wickets || '-';
+    document.getElementById('player-bio').textContent = data.bio || 'No biography available.';
+    document.getElementById('player-team').textContent = data.team || '';
+    document.getElementById('detail-career').textContent = data.career || '';
 
-    // Show detail view, hide table
+    const photo = document.getElementById('player-photo');
+    if (data.photo) {
+      photo.src = data.photo;
+      photo.style.display = 'block';
+    } else {
+      photo.style.display = 'none';
+    }
+
     document.getElementById('stats-view').classList.add('hidden');
     document.getElementById('player-detail-view').classList.remove('hidden');
   });
+});
+
+document.getElementById('back-to-table').addEventListener('click', () => {
+  document.getElementById('player-detail-view').classList.add('hidden');
+  document.getElementById('stats-view').classList.remove('hidden');
 });
 
 // ===== BACK BUTTON =====

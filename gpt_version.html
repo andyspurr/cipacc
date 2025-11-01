@@ -94,16 +94,28 @@
   </div>
 </div>
 
-<!-- Detail View -->
 <div id="player-detail-view" class="hidden">
   <button id="back-to-table" class="back-btn">← Back</button>
-  <h2 id="player-name"></h2>
-  <div class="player-stats">
+
+  <div class="player-header">
+    <img id="player-photo" src="" alt="Player photo" />
+    <h2 id="player-name"></h2>
+    <p id="player-team"></p>
+  </div>
+
+  <div class="player-meta">
+    <p><strong>Career:</strong> <span id="detail-career"></span></p>
     <p><strong>Matches:</strong> <span id="detail-matches"></span></p>
     <p><strong>Runs:</strong> <span id="detail-runs"></span></p>
     <p><strong>Wickets:</strong> <span id="detail-wickets"></span></p>
   </div>
+
+  <div class="player-bio">
+    <h3>Profile</h3>
+    <p id="player-bio"></p>
+  </div>
 </div>
+
 </section>
   <section class="et-slide" id="tab-about"><h2>About</h2>
  <p> CIPA-CITMA CC play friendly mid-week matches against other office-based teams. The membership is primarily patent and trademark attorneys, but there are a few ringers floating around.</p>
