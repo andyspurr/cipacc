@@ -236,66 +236,83 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
-// ===== PIE CHART FOR RESULTS =====
-let resultsChart;
+document.addEventListener('DOMContentLoaded', function() {
+  const resultsTable = document.getElementById('results-table');
+  const resultsSelect = document.getElementById('results-season-select');
+  const rows = Array.from(resultsTable.querySelectorAll('tbody tr'));
+  let resultsChart;
 
-// Function to count wins/losses/ties
-function getResultsCounts(rows, selectedYear) {
-  let wins = 0, losses = 0, ties = 0;
-
+  // 1️⃣ Populate the season dropdown dynamically from Date column
+  const yearSet = new Set();
   rows.forEach(row => {
-    const rowDate = row.cells[0].textContent.trim();
-    const rowYear = rowDate.split('-')[0];
-
-    if (selectedYear === 'all' || rowYear === selectedYear) {
-      const result = row.cells[3].textContent.trim().toLowerCase(); // Result column
-      if (result === 'win') wins++;
-      else if (result === 'loss') losses++;
-      else if (result === 'tie') ties++;
-    }
+    const year = row.cells[0].textContent.trim().split('-')[0];
+    if (year) yearSet.add(year);
   });
 
-  return [wins, losses, ties];
-}
+  Array.from(yearSet).sort((a, b) => b - a).forEach(year => {
+    const opt = document.createElement('option');
+    opt.value = year;
+    opt.textContent = year;
+    resultsSelect.appendChild(opt);
+  });
 
-// Function to create or update chart
-function updateResultsChart(selectedYear) {
-  const counts = getResultsCounts(rows, selectedYear);
+  // 2️⃣ Function to filter table rows based on selected year
+  function filterResultsTable(selectedYear) {
+    rows.forEach(row => {
+      const rowYear = row.cells[0].textContent.trim().split('-')[0];
+      row.style.display = selectedYear === 'all' || rowYear === selectedYear ? '' : 'none';
+    });
+  }
 
-  if (!resultsChart) {
-    const ctx = document.getElementById('results-pie-chart').getContext('2d');
-    resultsChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Wins', 'Losses', 'Ties'],
-        datasets: [{
-          data: counts,
-          backgroundColor: ['#4caf50', '#f44336', '#ffc107']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
+  // 3️⃣ Function to count Wins / Losses / Ties for the chart
+  function getResultsCounts(selectedYear) {
+    let wins = 0, losses = 0, ties = 0;
+    rows.forEach(row => {
+      const rowYear = row.cells[0].textContent.trim().split('-')[0];
+      if (selectedYear === 'all' || rowYear === selectedYear) {
+        const result = row.cells[3].textContent.trim().toLowerCase();
+        if (result === 'win') wins++;
+        else if (result === 'loss') losses++;
+        else if (result === 'tie') ties++;
       }
     });
-  } else {
-    resultsChart.data.datasets[0].data = counts;
-    resultsChart.update();
+    return [wins, losses, ties];
   }
-}
 
-// Initialize chart on page load
-updateResultsChart('all');
+  // 4️⃣ Function to create or update the chart
+  function updateResultsChart(selectedYear) {
+    const counts = getResultsCounts(selectedYear);
+    const ctx = document.getElementById('results-pie-chart').getContext('2d');
 
-// Update chart whenever season is changed
-resultsSelect.addEventListener('change', e => {
-  const selectedYear = e.target.value;
-  rows.forEach(row => {
-    const rowYear = row.cells[0].textContent.trim().split('-')[0];
-    row.style.display = selectedYear === 'all' || rowYear === selectedYear ? '' : 'none';
+    if (!resultsChart) {
+      resultsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Wins', 'Losses', 'Ties'],
+          datasets: [{
+            data: counts,
+            backgroundColor: ['#4caf50', '#f44336', '#ffc107']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    } else {
+      resultsChart.data.datasets[0].data = counts;
+      resultsChart.update();
+    }
+  }
+
+  // 5️⃣ Event listener for season dropdown
+  resultsSelect.addEventListener('change', e => {
+    const selectedYear = e.target.value;
+    filterResultsTable(selectedYear);
+    updateResultsChart(selectedYear);
   });
-  updateResultsChart(selectedYear);
-});
 
+  // 6️⃣ Initialize table and chart
+  filterResultsTable('all');
+  updateResultsChart('all');
+});

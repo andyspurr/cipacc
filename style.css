@@ -398,3 +398,23 @@ a {
   outline: none;
   box-shadow: 0 0 6px rgba(0,119,204,0.3);
 }
+.results-dashboard {
+  display: flex;
+  flex-wrap: wrap; /* allow stacking on small screens */
+  justify-content: space-between;
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  gap: 20px;
+}
+
+.results-table-wrapper {
+  flex: 1 1 60%; /* table takes ~60% of width */
+  min-width: 300px;
+  overflow-x: auto;
+}
+
+.results-chart-container {
+  flex: 1 1 35%; /* chart takes ~35% of width */
+  min-width: 250px;
+}
