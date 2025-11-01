@@ -1,3 +1,4 @@
+// ===== STICKY NAVIGATION =====
 class StickyNavigation {
   constructor() {
     this.currentId = null;
@@ -9,7 +10,7 @@ class StickyNavigation {
     this.placeholder = $('<div class="et-hero-tabs-placeholder"></div>');
 
     const self = this;
-    this.$tabs.on('click', function(e) { self.onTabClick(e, $(this)); });
+    this.$tabs.on('click', function (e) { self.onTabClick(e, $(this)); });
     $(window).on('scroll', () => this.onScroll());
     $(window).on('resize', () => this.onResize());
 
@@ -17,7 +18,7 @@ class StickyNavigation {
     this.setSliderCss();
 
     // Parallax effect for hero background
-    $(window).on('scroll', function() {
+    $(window).on('scroll', function () {
       const scrollTop = $(window).scrollTop();
       $('.et-hero-tabs').css('background-position', 'center ' + (scrollTop * 0.5) + 'px');
     });
@@ -69,7 +70,7 @@ class StickyNavigation {
     let newCurrentTab = null;
     const self = this;
 
-    this.$tabs.each(function() {
+    this.$tabs.each(function () {
       const id = $(this).attr('href');
       const $section = $(id);
       if (!$section.length) return;
@@ -88,7 +89,7 @@ class StickyNavigation {
       this.currentId = newCurrentId;
       this.currentTab = newCurrentTab;
 
-      // Update active class
+      // Update active tab highlight
       this.$tabs.removeClass('active');
       if (this.currentTab) this.currentTab.addClass('active');
 
@@ -112,56 +113,55 @@ class StickyNavigation {
   }
 }
 
-// ===== SORTABLE STATS TABLE =====
-$(document).ready(function() {
+// ===== SORTABLE + FILTERABLE TABLES =====
+$(document).ready(function () {
   new StickyNavigation();
 
-  const table = document.getElementById('stats-table');
-  const headers = table.querySelectorAll('th');
-  let sortDirection = 1; // 1 = ascending, -1 = descending
+  // Make all tables with class "sortable-table" interactive
+  $('table.sortable-table').each(function () {
+    const $table = $(this);
+    const $rows = $table.find('tbody tr');
 
-  headers.forEach((header, index) => {
-    header.addEventListener('click', () => {
-      const type = header.getAttribute('data-type');
-      const rows = Array.from(table.querySelectorAll('tbody tr'));
-      const currentIsAscending = header.classList.contains('asc');
+    // === SORT FUNCTION ===
+    $table.find('th').on('click', function () {
+      const index = $(this).index();
+      const type = $(this).data('type');
+      const isAsc = $(this).hasClass('asc');
 
-      // Remove arrows from all headers
-      headers.forEach(h => h.classList.remove('asc', 'desc'));
+      $table.find('th').removeClass('asc desc');
+      $(this).addClass(isAsc ? 'desc' : 'asc');
 
-      // Toggle direction
-      header.classList.toggle('asc', !currentIsAscending);
-      header.classList.toggle('desc', currentIsAscending);
-      sortDirection = currentIsAscending ? -1 : 1;
-
-      // Sort rows
-      rows.sort((a, b) => {
-        const aText = a.children[index].innerText.trim();
-        const bText = b.children[index].innerText.trim();
+      const sortedRows = $rows.get().sort((a, b) => {
+        let A = $(a).children('td').eq(index).text().toLowerCase();
+        let B = $(b).children('td').eq(index).text().toLowerCase();
 
         if (type === 'number') {
-          return sortDirection * (parseFloat(aText) - parseFloat(bText));
-        } else {
-          return sortDirection * aText.localeCompare(bText);
+          A = parseFloat(A) || 0;
+          B = parseFloat(B) || 0;
         }
+
+        if (A < B) return isAsc ? 1 : -1;
+        if (A > B) return isAsc ? -1 : 1;
+        return 0;
       });
 
-      // Reattach sorted rows
-      const tbody = table.querySelector('tbody');
-      rows.forEach(row => tbody.appendChild(row));
+      $.each(sortedRows, function (_, row) {
+        $table.children('tbody').append(row);
+      });
     });
+
+    // === FILTER FUNCTION (if linked filter input exists) ===
+    const filterId = $table.data('filter'); // e.g. data-filter="#stats-filter"
+    if (filterId && $(filterId).length) {
+      const $filter = $(filterId);
+      $filter.on('keyup', function () {
+        const value = $(this).val().toLowerCase().trim();
+
+        $rows.each(function () {
+          const text = $(this).text().toLowerCase();
+          $(this).toggle(text.includes(value));
+        });
+      });
+    }
   });
 });
-// ===== FILTER FUNCTIONALITY =====
-const filterInput = document.getElementById('stats-filter');
-if (filterInput) {
-  filterInput.addEventListener('keyup', () => {
-    const filterText = filterInput.value.toLowerCase();
-    const rows = document.querySelectorAll('#stats-table tbody tr');
-    rows.forEach(row => {
-      const text = row.innerText.toLowerCase();
-      row.style.display = text.includes(filterText) ? '' : 'none';
-    });
-  });
-}
-
