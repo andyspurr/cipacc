@@ -303,6 +303,63 @@ a {
   align-items: center;
   margin-bottom: 1.5rem;
 }
+.results-filter-container {
+  position: sticky;
+  top: 70px;
+  z-index: 5;
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto 10px auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: #fff;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#results-season-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+#results-season-select:focus {
+  border-color: #0077cc;
+  outline: none;
+  box-shadow: 0 0 6px rgba(0,119,204,0.3);
+}
+
+.results-table-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 20px auto;
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+#results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#results-table th, #results-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+#results-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+#results-table tr:hover {
+  background: #f0f8ff;
+}
 
 
 /* ===== STICKY FILTER BAR ===== */

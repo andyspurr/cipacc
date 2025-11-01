@@ -201,3 +201,43 @@ document.getElementById('back-to-table').addEventListener('click', () => {
   document.getElementById('player-detail-view').classList.add('hidden');
   document.getElementById('stats-view').classList.remove('hidden');
 });
+// ===== RESULTS TABLE YEAR FILTER =====
+document.addEventListener('DOMContentLoaded', function () {
+  const resultsTable = document.getElementById('results-table');
+  const resultsSelect = document.getElementById('results-season-select');
+
+  if (!resultsTable || !resultsSelect) return;
+
+  const rows = Array.from(resultsTable.querySelectorAll('tbody tr'));
+  const yearSet = new Set();
+
+  // Collect available years from the "Season" column (last cell)
+  rows.forEach(row => {
+    const seasonCell = row.cells[row.cells.length - 1];
+    if (seasonCell) {
+      const year = seasonCell.textContent.trim();
+      if (year) yearSet.add(year);
+    }
+  });
+
+  // Populate dropdown with unique years
+  Array.from(yearSet).sort((a, b) => b - a).forEach(year => {
+    const opt = document.createElement('option');
+    opt.value = year;
+    opt.textContent = year;
+    resultsSelect.appendChild(opt);
+  });
+
+  // Filter function
+  resultsSelect.addEventListener('change', e => {
+    const selectedYear = e.target.value;
+    rows.forEach(row => {
+      const year = row.cells[row.cells.length - 1].textContent.trim();
+      if (selectedYear === 'all' || year === selectedYear) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+});
