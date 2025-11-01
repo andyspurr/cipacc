@@ -198,7 +198,7 @@ a {
   background: #fafafa;
 }
 
-#stats-table tr:hover {
+#stats-table tr:hover, #fixtures-table tr:hover {
   background: #f0f8ff;
 }
 
