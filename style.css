@@ -159,7 +159,7 @@ a {
   background: white;
 }
 
-#stats-table, #fixutres {
+#stats-table, #fixutres-table {
   width: 100%;
   border-collapse: collapse;
   font-family: Arial, sans-serif;
@@ -194,7 +194,7 @@ a {
   color: #0077cc;
 }
 
-#stats-table tr:nth-child(even) {
+#stats-table tr:nth-child(even), #fixtures-table tr:nth-child(even) {
   background: #fafafa;
 }
 
