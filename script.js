@@ -242,13 +242,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const rows = Array.from(resultsTable.querySelectorAll('tbody tr'));
   let resultsChart;
 
-  // 1️⃣ Populate the season dropdown dynamically from Date column
-  const yearSet = new Set();
+  // 1️⃣ Populate the season dropdown dynamically from Date column, no duplicates
+  const yearSet = new Set(); // Set ensures uniqueness
   rows.forEach(row => {
     const year = row.cells[0].textContent.trim().split('-')[0];
     if (year) yearSet.add(year);
   });
 
+  // Clear existing options except "All"
+  resultsSelect.innerHTML = '<option value="all" selected>All</option>';
+
+  // Add sorted unique years
   Array.from(yearSet).sort((a, b) => b - a).forEach(year => {
     const opt = document.createElement('option');
     opt.value = year;
@@ -256,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resultsSelect.appendChild(opt);
   });
 
-  // 2️⃣ Function to filter table rows based on selected year
+  // 2️⃣ Filter table rows
   function filterResultsTable(selectedYear) {
     rows.forEach(row => {
       const rowYear = row.cells[0].textContent.trim().split('-')[0];
@@ -264,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // 3️⃣ Function to count Wins / Losses / Ties for the chart
+  // 3️⃣ Count Wins / Losses / Ties
   function getResultsCounts(selectedYear) {
     let wins = 0, losses = 0, ties = 0;
     rows.forEach(row => {
@@ -279,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return [wins, losses, ties];
   }
 
-  // 4️⃣ Function to create or update the chart
+  // 4️⃣ Create or update pie chart
   function updateResultsChart(selectedYear) {
     const counts = getResultsCounts(selectedYear);
     const ctx = document.getElementById('results-pie-chart').getContext('2d');
@@ -305,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // 5️⃣ Event listener for season dropdown
+  // 5️⃣ Event listener for dropdown
   resultsSelect.addEventListener('change', e => {
     const selectedYear = e.target.value;
     filterResultsTable(selectedYear);
