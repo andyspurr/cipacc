@@ -212,6 +212,42 @@ a {
 .sortable-table tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+.hidden {
+  display: none;
+}
+
+#player-detail-view {
+  width: 90%;
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #0077cc;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+.player-stats p {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
 /* ===== STICKY FILTER BAR ===== */
 .stats-filter-container {
   position: sticky;

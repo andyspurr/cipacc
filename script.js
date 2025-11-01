@@ -165,3 +165,28 @@ $(document).ready(function () {
     }
   });
 });
+// ===== ROW CLICK TO DETAIL VIEW =====
+document.querySelectorAll('#stats-table tbody tr').forEach(row => {
+  row.addEventListener('click', () => {
+    const player = row.dataset.player;
+    const matches = row.dataset.matches;
+    const runs = row.dataset.runs;
+    const wickets = row.dataset.wickets;
+
+    // Fill in details
+    document.getElementById('player-name').textContent = player;
+    document.getElementById('detail-matches').textContent = matches;
+    document.getElementById('detail-runs').textContent = runs;
+    document.getElementById('detail-wickets').textContent = wickets;
+
+    // Show detail view, hide table
+    document.getElementById('stats-view').classList.add('hidden');
+    document.getElementById('player-detail-view').classList.remove('hidden');
+  });
+});
+
+// ===== BACK BUTTON =====
+document.getElementById('back-to-table').addEventListener('click', () => {
+  document.getElementById('player-detail-view').classList.add('hidden');
+  document.getElementById('stats-view').classList.remove('hidden');
+});

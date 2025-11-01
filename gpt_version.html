@@ -66,34 +66,45 @@
     <section class="et-slide" id="tab-stats">
   <h2>Stats</h2>
 
-  <!-- Filter Bar -->
+  <!-- Filter + Table -->
+<div id="stats-view">
   <div class="stats-filter-container">
-    <input type="text" id="stats-filter" placeholder="Search player..." />
+    <input type="text" id="stats-filter" placeholder="Search players...">
   </div>
 
-  <!-- Table -->
   <div class="stats-table-container">
-    <<table id="stats-table" class="sortable-table" data-filter="#stats-filter">
+    <table id="stats-table" class="sortable-table" data-filter="#stats-filter">
       <thead>
         <tr>
           <th data-type="string">Player</th>
           <th data-type="number">Matches</th>
           <th data-type="number">Runs</th>
           <th data-type="number">Wickets</th>
-          <th data-type="number">Catches</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>John Smith</td><td>10</td><td>430</td><td>5</td><td>3</td></tr>
-        <tr><td>Mark Lee</td><td>8</td><td>270</td><td>12</td><td>4</td></tr>
-        <tr><td>David Brown</td><td>12</td><td>510</td><td>7</td><td>5</td></tr>
-        <tr><td>Alex Patel</td><td>9</td><td>355</td><td>3</td><td>2</td></tr>
-        <tr><td>Chris Green</td><td>11</td><td>290</td><td>15</td><td>6</td></tr>
+        <tr data-player="John Smith" data-matches="10" data-runs="430" data-wickets="5">
+          <td>John Smith</td><td>10</td><td>430</td><td>5</td>
+        </tr>
+        <tr data-player="Chris Green" data-matches="11" data-runs="290" data-wickets="15">
+          <td>Chris Green</td><td>11</td><td>290</td><td>15</td>
+        </tr>
       </tbody>
     </table>
   </div>
-</section>
+</div>
 
+<!-- Detail View -->
+<div id="player-detail-view" class="hidden">
+  <button id="back-to-table" class="back-btn">← Back</button>
+  <h2 id="player-name"></h2>
+  <div class="player-stats">
+    <p><strong>Matches:</strong> <span id="detail-matches"></span></p>
+    <p><strong>Runs:</strong> <span id="detail-runs"></span></p>
+    <p><strong>Wickets:</strong> <span id="detail-wickets"></span></p>
+  </div>
+</div>
+</section>
   <section class="et-slide" id="tab-about"><h2>About</h2>
  <p> CIPA-CITMA CC play friendly mid-week matches against other office-based teams. The membership is primarily patent and trademark attorneys, but there are a few ringers floating around.</p>
 <h3>Matches</h3>
