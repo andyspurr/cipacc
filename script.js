@@ -1,167 +1,170 @@
-// ===== HERO TABS SCROLL & STICKY =====
+// ====== MAIN MENU TABS ======
 const tabs = document.querySelectorAll('.et-hero-tab');
-const slider = document.querySelector('.et-hero-tab-slider');
-const slides = document.querySelectorAll('.et-slide');
+const tabSlider = document.querySelector('.et-hero-tab-slider');
 const tabContainer = document.querySelector('.et-hero-tabs-container');
-const stickyOffset = tabContainer.offsetHeight || 70;
 
-function updateSlider(tab) {
-    slider.style.width = tab.offsetWidth + 'px';
-    slider.style.left = tab.offsetLeft + 'px';
+function activateTab(tab) {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    // Move slider
+    tabSlider.style.width = tab.offsetWidth + 'px';
+    tabSlider.style.left = tab.offsetLeft + 'px';
 }
 
-// Scroll to section when tab clicked
 tabs.forEach(tab => {
     tab.addEventListener('click', e => {
         e.preventDefault();
-        const target = document.querySelector(tab.getAttribute('href'));
-        if (target) {
-            window.scrollTo({
-                top: target.offsetTop - stickyOffset,
-                behavior: 'smooth'
-            });
-        }
+        const targetId = tab.getAttribute('href').substring(1);
+        document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+        activateTab(tab);
     });
 });
 
-// Highlight tab on scroll
-window.addEventListener('scroll', () => {
-    let currentSlide = slides[0].id;
-    slides.forEach(slide => {
-        const rect = slide.getBoundingClientRect();
-        if (rect.top <= window.innerHeight / 2) {
-            currentSlide = slide.id;
-        }
-    });
-    tabs.forEach(tab => {
-        if (tab.getAttribute('href') === '#' + currentSlide) {
-            tab.classList.add('active');
-            updateSlider(tab);
-        } else {
-            tab.classList.remove('active');
-        }
-    });
-});
+// Initialize slider under first tab
+activateTab(tabs[0]);
 
-// Initialize slider
-updateSlider(tabs[0]);
-
-// ===== STATS CARD TOGGLE =====
-const statsCards = document.querySelectorAll('.stats-card');
-const tablePanels = document.querySelectorAll('.table-panel');
-
-statsCards.forEach(card => {
-    card.addEventListener('click', () => {
-        statsCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        const target = card.dataset.target;
-        tablePanels.forEach(panel => {
-            panel.classList.toggle('hidden', panel.id !== target);
-        });
-    });
-});
-
-// ===== PLAYER DETAIL VIEW =====
-const playerDetailView = document.getElementById('player-detail-view');
-const playerBackBtn = document.getElementById('player-detail-back');
-
-document.querySelectorAll('.sortable-table tbody tr').forEach(row => {
-    row.addEventListener('click', () => {
-        playerDetailView.classList.remove('hidden');
-        window.scrollTo({ top: playerDetailView.offsetTop - stickyOffset, behavior: 'smooth' });
-    });
-});
-
-playerBackBtn.addEventListener('click', () => {
-    playerDetailView.classList.add('hidden');
-});
-
-// ===== RESULTS SEASON FILTER =====
-const resultsSeasonSelect = document.getElementById('results-season-select');
-const resultsTableBody = document.querySelector('#results-table tbody');
-
-function filterResults() {
-    const season = resultsSeasonSelect.value;
-    resultsTableBody.querySelectorAll('tr').forEach(row => {
-        const year = row.cells[0].textContent.split('-')[0];
-        row.style.display = season === 'all' || year === season ? '' : 'none';
-    });
-}
-
-// Populate season select
-const years = new Set();
-resultsTableBody.querySelectorAll('tr').forEach(row => {
-    years.add(row.cells[0].textContent.split('-')[0]);
-});
-[...years].sort((a,b)=>b-a).forEach(year=>{
-    const option = document.createElement('option');
-    option.value = year;
-    option.textContent = year;
-    resultsSeasonSelect.appendChild(option);
-});
-
-resultsSeasonSelect.addEventListener('change', filterResults);
-filterResults();
-
-// ===== SORTABLE TABLES =====
-function sortTable(table, colIndex, type, ascending) {
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    rows.sort((a,b) => {
-        let x = a.cells[colIndex].textContent.trim();
-        let y = b.cells[colIndex].textContent.trim();
-        if(type==='number'){ x=parseFloat(x); y=parseFloat(y); }
-        if(type==='date'){ x=new Date(x); y=new Date(y); }
-        if(x<y) return ascending?-1:1;
-        if(x>y) return ascending?1:-1;
-        return 0;
-    });
-    rows.forEach(r => tbody.appendChild(r));
-}
-
-document.querySelectorAll('.sortable-table').forEach(table => {
-    table.querySelectorAll('th').forEach((th, index) => {
-        th.addEventListener('click', () => {
-            const type = th.dataset.type || 'string';
-            const ascending = !th.classList.contains('asc');
-            table.querySelectorAll('th').forEach(h => h.classList.remove('asc','desc'));
-            th.classList.toggle('asc', ascending);
-            th.classList.toggle('desc', !ascending);
-            sortTable(table, index, type, ascending);
-        });
-    });
-});
-
-// ===== ENSURE ALL SECTIONS ARE VISIBLE =====
-slides.forEach(slide => slide.style.display = 'block');
-
-// STICKY MENU
+// ====== STICKY MENU ======
 window.addEventListener('scroll', () => {
     if(window.scrollY > tabContainer.offsetTop) {
         tabContainer.classList.add('et-hero-tabs-container--top');
     } else {
         tabContainer.classList.remove('et-hero-tabs-container--top');
     }
+
+    // Highlight active tab on scroll
+    document.querySelectorAll('.et-slide').forEach((slide, idx) => {
+        const rect = slide.getBoundingClientRect();
+        if(rect.top <= 100 && rect.bottom >= 100) {
+            activateTab(tabs[idx]);
+        }
+    });
 });
 
-// Example stats data
-const statsData = {
-    batting: [
-        { Player: "Alice", Runs: 120, Average: 24, "High Score": 50 },
-        { Player: "Bob", Runs: 90, Average: 18, "High Score": 40 },
+// ====== RESULTS TABLE ======
+const resultsTable = document.getElementById('results-table');
+const resultsSeasonSelect = document.getElementById('results-season-select');
+
+// Example data per season
+const resultsData = {
+    "2024": [
+        { Date: "2024-06-10", Opponent: "Team A", Venue: "Home", Result: "Win" },
+        { Date: "2024-07-03", Opponent: "Team B", Venue: "Away", Result: "Loss" }
     ],
-    bowling: [
-        { Player: "Alice", Wickets: 5, Average: 22, Best: "3/15" },
-        { Player: "Bob", Wickets: 8, Average: 19, Best: "4/20" },
+    "2023": [
+        { Date: "2023-05-12", Opponent: "Team C", Venue: "Home", Result: "Win" }
     ],
-    superstat: [
-        { Player: "Alice", "Appearance Score": 10, "Bowling Score": 5, "Batting Score": 4, "Fielding Score": 3, Total: 22 },
-        { Player: "Bob", "Appearance Score": 12, "Bowling Score": 8, "Batting Score": 3, "Fielding Score": 2, Total: 25 },
+    "2022": [
+        { Date: "2022-06-18", Opponent: "Team D", Venue: "Away", Result: "Tie" }
     ]
 };
 
-function populateStats(tableId, data) {
-    const tbody = document.querySelector(`#${tableId} tbody`);
+// Populate season select
+Object.keys(resultsData).forEach(season => {
+    const option = document.createElement('option');
+    option.value = season;
+    option.textContent = season;
+    resultsSeasonSelect.appendChild(option);
+});
+
+// Function to populate results table
+function populateResults(season) {
+    const tbody = resultsTable.querySelector('tbody');
+    tbody.innerHTML = '';
+    const data = season === 'all' ? Object.values(resultsData).flat() : resultsData[season];
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    updateResultsChart(data);
+}
+
+// Listen to season change
+resultsSeasonSelect.addEventListener('change', () => {
+    populateResults(resultsSeasonSelect.value);
+});
+
+// Initialize results table with all
+populateResults('all');
+
+// ====== RESULTS PIE CHART ======
+let resultsChart;
+function updateResultsChart(data) {
+    const counts = { Win: 0, Loss: 0, Tie: 0 };
+    data.forEach(r => {
+        counts[r.Result] = (counts[r.Result] || 0) + 1;
+    });
+
+    const ctx = document.getElementById('results-pie-chart').getContext('2d');
+    if(resultsChart) resultsChart.destroy();
+
+    resultsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Win', 'Loss', 'Tie'],
+            datasets: [{
+                data: [counts.Win, counts.Loss, counts.Tie],
+                backgroundColor: ['#4caf50','#f44336','#ff9800']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+}
+
+// ====== STATS TABLES ======
+const statsData = {
+    "2024": {
+        batting: [
+            { Player: "Alice", Runs: 120, Average: 24, "High Score": 50 },
+            { Player: "Bob", Runs: 90, Average: 18, "High Score": 40 }
+        ],
+        bowling: [
+            { Player: "Alice", Wickets: 5, Average: 22, Best: "3/15" },
+            { Player: "Bob", Wickets: 8, Average: 19, Best: "4/20" }
+        ],
+        superstat: [
+            { Player: "Alice", "Appearance Score": 10, "Bowling Score": 5, "Batting Score": 4, "Fielding Score": 3, Total: 22 },
+            { Player: "Bob", "Appearance Score": 12, "Bowling Score": 8, "Batting Score": 3, "Fielding Score": 2, Total: 25 }
+        ]
+    },
+    "2023": {
+        batting: [
+            { Player: "Charlie", Runs: 80, Average: 20, "High Score": 35 }
+        ],
+        bowling: [
+            { Player: "Charlie", Wickets: 6, Average: 21, Best: "3/12" }
+        ],
+        superstat: [
+            { Player: "Charlie", "Appearance Score": 8, "Bowling Score": 6, "Batting Score": 3, "Fielding Score": 2, Total: 19 }
+        ]
+    }
+};
+
+const statsSeasonSelect = document.getElementById('stats-season-select');
+Object.keys(statsData).forEach(season => {
+    const option = document.createElement('option');
+    option.value = season;
+    option.textContent = season;
+    statsSeasonSelect.appendChild(option);
+});
+
+// Populate stats tables
+function populateStats(season) {
+    const seasonData = statsData[season];
+    populateTable('batting-table', seasonData.batting);
+    populateTable('bowling-table', seasonData.bowling);
+    populateTable('superstat-table', seasonData.superstat);
+}
+
+function populateTable(tableId, data) {
+    const tbody = document.getElementById(tableId).querySelector('tbody');
     tbody.innerHTML = '';
     data.forEach(row => {
         const tr = document.createElement('tr');
@@ -174,7 +177,34 @@ function populateStats(tableId, data) {
     });
 }
 
-// Populate all stats tables
-populateStats('batting-table', statsData.batting);
-populateStats('bowling-table', statsData.bowling);
-populateStats('superstat-table', statsData.superstat);
+// Listen to stats season change
+statsSeasonSelect.addEventListener('change', () => {
+    populateStats(statsSeasonSelect.value);
+});
+
+// Initialize stats table with first season
+populateStats(Object.keys(statsData)[0]);
+
+// ====== STATS TAB SWITCHING ======
+const statCards = document.querySelectorAll('.stats-card');
+const tablePanels = document.querySelectorAll('.table-panel');
+
+statCards.forEach(card => {
+    card.addEventListener('click', () => {
+        statCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        tablePanels.forEach(panel => panel.classList.add('hidden'));
+        const target = document.getElementById(card.dataset.target);
+        target.classList.remove('hidden');
+    });
+});
+
+// ====== PLAYER DETAIL VIEW ======
+const playerDetailView = document.getElementById('player-detail-view');
+const playerDetailBack = document.getElementById('player-detail-back');
+
+playerDetailBack.addEventListener('click', () => {
+    playerDetailView.classList.add('hidden');
+    document.querySelector('.et-main').style.display = 'block';
+});
