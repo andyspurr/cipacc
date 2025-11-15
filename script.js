@@ -1,16 +1,37 @@
-// ===== HERO TABS =====
+// ===== GLOBAL VARIABLES =====
 const tabs = document.querySelectorAll('.et-hero-tab');
-const slider = document.querySelector('.et-hero-tab-slider');
+const tabSlider = document.querySelector('.et-hero-tab-slider');
 const tabContainer = document.querySelector('.et-hero-tabs-container');
+const slides = document.querySelectorAll('.et-slide');
+const playerDetailView = document.getElementById('player-detail-view');
+const playerBackBtn = document.getElementById('player-detail-back');
+const playerName = document.getElementById('player-name');
+const playerTeam = document.getElementById('player-team');
+const playerBio = document.getElementById('player-bio');
+const playerSeasonSelectDetail = document.getElementById('player-season-select');
 
-function setActiveTab(tab){
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+// ===== STICKY MENU =====
+const stickyOffset = tabContainer.offsetTop;
+window.addEventListener('scroll', () => {
+    if(window.pageYOffset > stickyOffset){
+        tabContainer.classList.add('et-hero-tabs-container--top');
+    } else {
+        tabContainer.classList.remove('et-hero-tabs-container--top');
+    }
+});
 
-    const left = tab.offsetLeft;
-    const width = tab.offsetWidth;
-    slider.style.left = left + 'px';
-    slider.style.width = width + 'px';
+// ===== INITIALIZE SLIDES =====
+slides.forEach(s => s.style.display = 'flex');
+
+// ===== TAB NAVIGATION =====
+function setActiveTab(activeTab){
+    tabs.forEach(tab => tab.classList.remove('active'));
+    activeTab.classList.add('active');
+
+    const rect = activeTab.getBoundingClientRect();
+    const containerRect = tabContainer.getBoundingClientRect();
+    tabSlider.style.width = `${rect.width}px`;
+    tabSlider.style.left = `${activeTab.offsetLeft}px`;
 }
 
 tabs.forEach(tab => {
@@ -24,216 +45,163 @@ tabs.forEach(tab => {
     });
 });
 
-// Initialize slider position
-if(tabs.length) setActiveTab(tabs[0]);
+// ===== FIXTURES TABLE =====
+// Already in HTML, no additional JS needed
 
-// ===== STICKY MENU =====
-const heroSection = document.querySelector('.et-hero-tabs');
-window.addEventListener('scroll', ()=>{
-    if(window.scrollY > heroSection.offsetHeight){
-        tabContainer.classList.add('et-hero-tabs-container--top');
-    } else {
-        tabContainer.classList.remove('et-hero-tabs-container--top');
-    }
-});
-
-// ===== RESULTS TABLE & PIE CHART =====
-const resultsTable = document.getElementById('results-table');
+// ===== RESULTS TABLE =====
+const resultsTableBody = document.querySelector('#results-table tbody');
 const resultsSeasonSelect = document.getElementById('results-season-select');
-const resultsChartCtx = document.getElementById('results-pie-chart').getContext('2d');
 
-// Sample results data by season
-const resultsData = {
-    '2024': [
-        {Date:'2024-06-10', Opponent:'Team A', Venue:'Home', Result:'Win'},
-        {Date:'2024-07-03', Opponent:'Team B', Venue:'Away', Result:'Loss'}
-    ],
-    '2023': [
-        {Date:'2023-05-12', Opponent:'Team C', Venue:'Home', Result:'Win'}
-    ],
-    '2022': [
-        {Date:'2022-06-18', Opponent:'Team D', Venue:'Away', Result:'Tie'}
-    ]
-};
+const resultsData = [
+    {date:'2024-06-10', opponent:'Team A', venue:'Home', result:'Win', season:'2024'},
+    {date:'2024-07-03', opponent:'Team B', venue:'Away', result:'Loss', season:'2024'},
+    {date:'2023-05-12', opponent:'Team C', venue:'Home', result:'Win', season:'2023'},
+    {date:'2022-06-18', opponent:'Team D', venue:'Away', result:'Tie', season:'2022'},
+];
 
-// Populate season select
-Object.keys(resultsData).sort((a,b)=>b-a).forEach(season=>{
+// Populate season filter
+const seasons = Array.from(new Set(resultsData.map(d=>d.season))).sort((a,b)=>b-a);
+seasons.forEach(s=>{
     const opt = document.createElement('option');
-    opt.value = season;
-    opt.textContent = season;
+    opt.value = s;
+    opt.textContent = s;
     resultsSeasonSelect.appendChild(opt);
 });
 
-// Render table for selected season
+// Render results table
 function renderResultsTable(season){
-    const tbody = resultsTable.querySelector('tbody');
-    tbody.innerHTML='';
-    const data = resultsData[season] || [];
-    data.forEach(r=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML=`<td>${r.Date}</td><td>${r.Opponent}</td><td>${r.Venue}</td><td>${r.Result}</td>`;
-        tbody.appendChild(tr);
-    });
-    renderResultsChart(season);
-}
-
-// Render pie chart
-let resultsChart;
-function renderResultsChart(season){
-    const data = resultsData[season] || [];
-    const counts = {Win:0, Loss:0, Tie:0};
-    data.forEach(r=>{if(counts[r.Result]!==undefined) counts[r.Result]++;});
-
-    const chartData = {
-        labels: ['Win','Loss','Tie'],
-        datasets:[{
-            data:[counts.Win, counts.Loss, counts.Tie],
-            backgroundColor:['#4caf50','#f44336','#ff9800']
-        }]
-    };
-
-    if(resultsChart) resultsChart.destroy();
-    resultsChart = new Chart(resultsChartCtx, {type:'pie', data:chartData});
+    resultsTableBody.innerHTML = '';
+    resultsData.filter(r => season === 'all' || r.season === season)
+        .forEach(r=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${r.date}</td><td>${r.opponent}</td><td>${r.venue}</td><td>${r.result}</td>`;
+            resultsTableBody.appendChild(tr);
+        });
+    updateResultsPieChart(season);
 }
 
 resultsSeasonSelect.addEventListener('change', e=>{
     renderResultsTable(e.target.value);
 });
 
-// Initial render
-resultsSeasonSelect.value = Object.keys(resultsData)[0];
-renderResultsTable(resultsSeasonSelect.value);
+// ===== RESULTS PIE CHART =====
+const ctx = document.getElementById('results-pie-chart').getContext('2d');
+let pieChart;
 
-// ===== STATS TABLES =====
-const statsTables = {
-    'batting':'batting-table',
-    'bowling':'bowling-table',
-    'superstat':'superstat-table'
-};
+function updateResultsPieChart(season){
+    const filtered = resultsData.filter(r => season==='all'||r.season===season);
+    const counts = {Win:0, Loss:0, Tie:0};
+    filtered.forEach(r=>{ counts[r.result]++; });
+    const data = [counts.Win, counts.Loss, counts.Tie];
 
-// Sample player stats
-const statsData = {
-    '2024': {
-        batting:[
-            {Player:'Alice', Runs:350, Average:35, 'High Score':80},
-            {Player:'Bob', Runs:200, Average:25, 'High Score':50}
-        ],
-        bowling:[
-            {Player:'Alice', Wickets:12, Average:15, Best:'4/20'},
-            {Player:'Charlie', Wickets:10, Average:18, Best:'3/25'}
-        ],
-        superstat:[
-            {Player:'Alice', 'Appearance Score':8, 'Bowling Score':9, 'Batting Score':9, 'Fielding Score':7, Total:33}
-        ]
+    if(pieChart) pieChart.destroy();
+
+    pieChart = new Chart(ctx, {
+        type:'pie',
+        data:{
+            labels:['Win','Loss','Tie'],
+            datasets:[{
+                data:data,
+                backgroundColor:['#4caf50','#f44336','#ffc107']
+            }]
+        },
+        options:{responsive:true}
+    });
+}
+
+// Initialize table and chart
+renderResultsTable('all');
+
+// ===== PLAYER STATS =====
+const statsCards = document.querySelectorAll('.stats-card');
+const tablePanels = document.querySelectorAll('.table-panel');
+const statsSeasonSelect = document.getElementById('stats-season-select');
+
+const playerData = {
+    "Alice": {
+        team:"CIPA CITMA",
+        bio:"Alice is an all-rounder.",
+        seasons:{
+            "2024": {batting:{Runs:250,Average:50,High:75},bowling:{Wickets:12,Average:18,Best:"4/22"},superstat:{AppearanceScore:8,BowlingScore:12,BattingScore:15,FieldingScore:5,Total:40}},
+            "2023": {batting:{Runs:180,Average:45,High:60},bowling:{Wickets:8,Average:22,Best:"3/18"},superstat:{AppearanceScore:7,BowlingScore:8,BattingScore:12,FieldingScore:6,Total:33}}
+        }
     },
-    '2023': {
-        batting:[
-            {Player:'Alice', Runs:300, Average:33, 'High Score':75},
-            {Player:'Charlie', Runs:280, Average:28, 'High Score':70}
-        ],
-        bowling:[
-            {Player:'Charlie', Wickets:10, Average:20, Best:'3/30'}
-        ],
-        superstat:[
-            {Player:'Charlie', 'Appearance Score':7, 'Bowling Score':8, 'Batting Score':7, 'Fielding Score':6, Total:28}
-        ]
+    "Bob": {
+        team:"CIPA CITMA",
+        bio:"Bob is a specialist batsman.",
+        seasons:{
+            "2024": {batting:{Runs:300,Average:60,High:85},bowling:{Wickets:2,Average:40,Best:"1/12"},superstat:{AppearanceScore:9,BowlingScore:3,BattingScore:20,FieldingScore:4,Total:36}},
+            "2023": {batting:{Runs:220,Average:44,High:70},bowling:{Wickets:3,Average:35,Best:"2/20"},superstat:{AppearanceScore:8,BowlingScore:4,BattingScore:15,FieldingScore:5,Total:32}}
+        }
     }
 };
 
-// Populate season select
-const statsSeasonSelect = document.getElementById('stats-season-select');
-Object.keys(statsData).sort((a,b)=>b-a).forEach(season=>{
+// Populate stats season filter
+const statSeasons = Array.from(new Set(Object.values(playerData).flatMap(p => Object.keys(p.seasons)))).sort((a,b)=>b-a);
+statSeasons.forEach(s=>{
     const opt = document.createElement('option');
-    opt.value = season;
-    opt.textContent = season;
+    opt.value=s;
+    opt.textContent=s;
     statsSeasonSelect.appendChild(opt);
 });
 
-// Populate stats tables
-function populateStatsTables(season){
-    for(const type in statsTables){
-        const tbody = document.getElementById(statsTables[type]).querySelector('tbody');
-        tbody.innerHTML='';
-        const data = statsData[season][type] || [];
-        data.forEach(p=>{
-            const tr = document.createElement('tr');
-            tr.innerHTML=Object.values(p).map(v=>`<td>${v}</td>`).join('');
-            // Make row clickable
-            tr.addEventListener('click', ()=>showPlayerDetail(p.Player));
-            tbody.appendChild(tr);
-        });
-    }
+// Render stats table
+function renderStatsTable(season){
+    const battingBody = document.querySelector('#batting-table tbody');
+    const bowlingBody = document.querySelector('#bowling-table tbody');
+    const superstatBody = document.querySelector('#superstat-table tbody');
+    battingBody.innerHTML = '';
+    bowlingBody.innerHTML = '';
+    superstatBody.innerHTML = '';
+
+    Object.entries(playerData).forEach(([name,data])=>{
+        if(!data.seasons[season]) return;
+        const s = data.seasons[season];
+        // Batting
+        const trBat = document.createElement('tr');
+        trBat.innerHTML = `<td>${name}</td><td>${s.batting.Runs}</td><td>${s.batting.Average}</td><td>${s.batting.High}</td>`;
+        battingBody.appendChild(trBat);
+        // Bowling
+        const trBowl = document.createElement('tr');
+        trBowl.innerHTML = `<td>${name}</td><td>${s.bowling.Wickets}</td><td>${s.bowling.Average}</td><td>${s.bowling.Best}</td>`;
+        bowlingBody.appendChild(trBowl);
+        // Superstat
+        const trSuper = document.createElement('tr');
+        trSuper.innerHTML = `<td>${name}</td><td>${s.superstat.AppearanceScore}</td><td>${s.superstat.BowlingScore}</td><td>${s.superstat.BattingScore}</td><td>${s.superstat.FieldingScore}</td><td>${s.superstat.Total}</td>`;
+        superstatBody.appendChild(trSuper);
+    });
 }
 
-// Initial render
-statsSeasonSelect.value = Object.keys(statsData)[0];
-populateStatsTables(statsSeasonSelect.value);
-
 statsSeasonSelect.addEventListener('change', e=>{
-    populateStatsTables(e.target.value);
+    renderStatsTable(e.target.value);
 });
 
-// Switch between batting/bowling/superstat tables
-const statsCards = document.querySelectorAll('.stats-card');
-const tablePanels = document.querySelectorAll('.table-panel');
+// Initialize stats table
+renderStatsTable(statSeasons[0]);
 
+// ===== STATS CARD SWITCH =====
 statsCards.forEach(card=>{
     card.addEventListener('click', ()=>{
         statsCards.forEach(c=>c.classList.remove('active'));
         card.classList.add('active');
-        tablePanels.forEach(p=>p.classList.add('hidden'));
-        document.getElementById(card.dataset.target).classList.remove('hidden');
+        const target = card.getAttribute('data-target');
+        tablePanels.forEach(panel=>{
+            if(panel.id === target) panel.classList.remove('hidden');
+            else panel.classList.add('hidden');
+        });
     });
 });
 
 // ===== PLAYER DETAIL VIEW =====
-const playerDetailView = document.getElementById('player-detail-view');
-const playerBackBtn = document.getElementById('player-detail-back');
-const playerName = document.getElementById('player-name');
-const playerPhoto = document.getElementById('player-photo');
-const playerTeam = document.getElementById('player-team');
-const playerBio = document.getElementById('player-bio');
-const playerSeasonSelectDetail = document.getElementById('player-season-select');
-const detailMatches = document.getElementById('detail-matches');
-const detailRuns = document.getElementById('detail-runs');
-const detailWickets = document.getElementById('detail-wickets');
-const detailAverage = document.getElementById('detail-average');
-
-// Player detailed data
-const playerData = {
-    'Alice': {
-        team:'CIPA CITMA CC',
-        bio:'Top-order batter and occasional bowler.',
-        seasons:{
-            '2024':{Matches:10,Runs:350,Wickets:12,Average:35},
-            '2023':{Matches:8,Runs:300,Wickets:10,Average:33}
-        }
-    },
-    'Bob': {
-        team:'CIPA CITMA CC',
-        bio:'All-rounder with strong fielding.',
-        seasons:{
-            '2024':{Matches:8,Runs:200,Wickets:8,Average:25}
-        }
-    },
-    'Charlie': {
-        team:'CIPA CITMA CC',
-        bio:'Bowling specialist.',
-        seasons:{
-            '2023':{Matches:9,Runs:280,Wickets:10,Average:28}
-        }
-    }
-};
-
 function showPlayerDetail(name){
     const pdata = playerData[name];
     if(!pdata) return;
+
     playerDetailView.classList.remove('hidden');
     playerName.textContent = name;
     playerTeam.textContent = pdata.team;
     playerBio.textContent = pdata.bio;
 
-    // Populate seasons
     playerSeasonSelectDetail.innerHTML = '';
     Object.keys(pdata.seasons).sort((a,b)=>b-a).forEach(s=>{
         const opt = document.createElement('option');
@@ -243,25 +211,24 @@ function showPlayerDetail(name){
     });
     updatePlayerStats(name, playerSeasonSelectDetail.value);
 
-    // Hide main slides
-    document.querySelectorAll('.et-slide').forEach(s=>s.style.display='none');
+    slides.forEach(s => s.style.display = 'none');
 }
 
 function updatePlayerStats(name, season){
     const pdata = playerData[name];
     if(!pdata || !pdata.seasons[season]) return;
     const s = pdata.seasons[season];
-    detailMatches.textContent = s.Matches;
-    detailRuns.textContent = s.Runs;
-    detailWickets.textContent = s.Wickets;
-    detailAverage.textContent = s.Average;
+    document.getElementById('detail-matches').textContent = "N/A";
+    document.getElementById('detail-runs').textContent = s.batting.Runs;
+    document.getElementById('detail-wickets').textContent = s.bowling.Wickets;
+    document.getElementById('detail-average').textContent = s.batting.Average;
 }
-
-playerSeasonSelectDetail.addEventListener('change', e=>{
-    updatePlayerStats(playerName.textContent, e.target.value);
-});
 
 playerBackBtn.addEventListener('click', ()=>{
     playerDetailView.classList.add('hidden');
-    document.querySelectorAll('.et-slide').forEach(s=>s.style.display='flex');
+    slides.forEach(s => s.style.display = 'flex');
+});
+
+playerSeasonSelectDetail.addEventListener('change', e=>{
+    updatePlayerStats(playerName.textContent, e.target.value);
 });
