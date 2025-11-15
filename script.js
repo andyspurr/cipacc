@@ -664,3 +664,115 @@ document.addEventListener('DOMContentLoaded', function () {
   enableSortingForAll();      // ensure headers are bound
   attachRowClickHandlers();   // ensure rows clickable
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Cards Switching ---
+  const cards = document.querySelectorAll(".stats-card");
+  const panels = document.querySelectorAll(".table-panel");
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const targetId = card.dataset.target;
+
+      cards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+
+      panels.forEach(panel => panel.classList.add("hidden"));
+      const panelToShow = document.getElementById(targetId);
+      if (panelToShow) panelToShow.classList.remove("hidden");
+
+      panelToShow.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  // --- Filter Functionality ---
+  const filterInput = document.getElementById("stats-filter");
+  filterInput.addEventListener("keyup", () => {
+    const filterText = filterInput.value.toLowerCase();
+    panels.forEach(panel => {
+      const rows = panel.querySelectorAll("tbody tr");
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filterText) ? "" : "none";
+      });
+    });
+  });
+
+  // --- Sortable Tables ---
+  document.querySelectorAll(".sortable-table").forEach(table => {
+    const headers = table.querySelectorAll("th");
+    headers.forEach((header, idx) => {
+      header.addEventListener("click", () => {
+        const type = header.dataset.type;
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        const asc = !header.classList.contains("asc");
+
+        headers.forEach(h => h.classList.remove("asc", "desc"));
+        header.classList.toggle("asc", asc);
+        header.classList.toggle("desc", !asc);
+
+        rows.sort((a, b) => {
+          const aText = a.children[idx].innerText.trim();
+          const bText = b.children[idx].innerText.trim();
+          if (type === "number") return asc ? aText - bText : bText - aText;
+          return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        });
+
+        rows.forEach(row => table.querySelector("tbody").appendChild(row));
+      });
+    });
+  });
+
+  // --- Player Detail Click ---
+  document.querySelectorAll(".sortable-table tbody").forEach(tbody => {
+    tbody.addEventListener("click", e => {
+      const row = e.target.closest("tr");
+      if (!row) return;
+
+      const playerName = row.children[0].innerText;
+      const bio = row.dataset.bio || "No biography available";
+      const stats = row.dataset.stats || "";
+
+      document.getElementById("player-name").innerText = playerName;
+      document.getElementById("player-bio").innerText = bio;
+      document.getElementById("player-stats").innerHTML = stats;
+
+      document.querySelectorAll(".table-panel").forEach(p => p.classList.add("hidden"));
+      document.getElementById("player-detail").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  // --- Back button ---
+  document.getElementById("back-to-tables").addEventListener("click", () => {
+    document.getElementById("player-detail").classList.add("hidden");
+    document.getElementById("batting").classList.remove("hidden");
+    cards.forEach(c => c.classList.remove("active"));
+    cards[0].classList.add("active");
+  });
+
+  // --- Pie Chart ---
+  const ctx = document.getElementById("results-chart").getContext("2d");
+  const chart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Wins", "Losses", "Ties"],
+      datasets: [{
+        data: [0, 0, 0], // update dynamically later
+        backgroundColor: ["#4caf50", "#f44336", "#ff9800"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "bottom" }
+      }
+    }
+  });
+
+  // Example: update chart based on a table selection
+  function updateChart(wins, losses, ties) {
+    chart.data.datasets[0].data = [wins, losses, ties];
+    chart.update();
+  }
+
+});
