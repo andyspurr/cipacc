@@ -295,3 +295,15 @@ a {
 
 /* ===== MISC ===== */
 iframe { max-width: 100%; border: 0; }
+
+.results-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.results-table-container th, 
+.results-table-container td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}

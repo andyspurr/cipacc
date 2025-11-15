@@ -134,3 +134,47 @@ document.querySelectorAll('.sortable-table').forEach(table => {
 
 // ===== ENSURE ALL SECTIONS ARE VISIBLE =====
 slides.forEach(slide => slide.style.display = 'block');
+
+// STICKY MENU
+window.addEventListener('scroll', () => {
+    if(window.scrollY > tabContainer.offsetTop) {
+        tabContainer.classList.add('et-hero-tabs-container--top');
+    } else {
+        tabContainer.classList.remove('et-hero-tabs-container--top');
+    }
+});
+
+// Example stats data
+const statsData = {
+    batting: [
+        { Player: "Alice", Runs: 120, Average: 24, "High Score": 50 },
+        { Player: "Bob", Runs: 90, Average: 18, "High Score": 40 },
+    ],
+    bowling: [
+        { Player: "Alice", Wickets: 5, Average: 22, Best: "3/15" },
+        { Player: "Bob", Wickets: 8, Average: 19, Best: "4/20" },
+    ],
+    superstat: [
+        { Player: "Alice", "Appearance Score": 10, "Bowling Score": 5, "Batting Score": 4, "Fielding Score": 3, Total: 22 },
+        { Player: "Bob", "Appearance Score": 12, "Bowling Score": 8, "Batting Score": 3, "Fielding Score": 2, Total: 25 },
+    ]
+};
+
+function populateStats(tableId, data) {
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = '';
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+}
+
+// Populate all stats tables
+populateStats('batting-table', statsData.batting);
+populateStats('bowling-table', statsData.bowling);
+populateStats('superstat-table', statsData.superstat);
