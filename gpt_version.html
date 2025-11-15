@@ -82,34 +82,25 @@
 
 </section>
 
-  <section id="tab-stats" class="stats-section">
+ <section id="stats" class="stats-section">
   <h2>Player Stats</h2>
 
-  <!-- Season filter -->
+  <!-- Controls -->
   <div class="stats-controls">
-    <label for="stats-season-select">Filter by season:</label>
+    <label for="stats-season-select">Season:</label>
     <select id="stats-season-select"></select>
 
     <input type="text" id="stats-search" placeholder="Search players">
   </div>
 
-  <!-- Cards for tables -->
+  <!-- Table Cards -->
   <div class="stats-cards">
-    <button class="stats-card active" data-target="batting-panel">
-      <div class="card-title">Batting</div>
-      <div class="card-sub">Top run totals</div>
-    </button>
-    <button class="stats-card" data-target="bowling-panel">
-      <div class="card-title">Bowling</div>
-      <div class="card-sub">Top wickets</div>
-    </button>
-    <button class="stats-card" data-target="superstat-panel">
-      <div class="card-title">Superstat</div>
-      <div class="card-sub">Appearance / Bat / Bowl / Field</div>
-    </button>
+    <button class="stats-card active" data-target="batting-panel">Batting</button>
+    <button class="stats-card" data-target="bowling-panel">Bowling</button>
+    <button class="stats-card" data-target="superstat-panel">Superstat</button>
   </div>
 
-  <!-- Batting Table -->
+  <!-- Tables -->
   <div class="table-panel" id="batting-panel">
     <table id="batting-table" class="sortable-table">
       <thead>
@@ -124,7 +115,6 @@
     </table>
   </div>
 
-  <!-- Bowling Table -->
   <div class="table-panel hidden" id="bowling-panel">
     <table id="bowling-table" class="sortable-table">
       <thead>
@@ -139,7 +129,6 @@
     </table>
   </div>
 
-  <!-- Superstat Table -->
   <div class="table-panel hidden" id="superstat-panel">
     <table id="superstat-table" class="sortable-table">
       <thead>
@@ -160,24 +149,19 @@
 <!-- Player Detail View -->
 <div id="player-detail-view" class="hidden">
   <button id="player-detail-back">← Back to tables</button>
-  <div class="player-detail">
-    <img id="player-photo" src="" alt="" style="display:none;">
-    <h3 id="player-name"></h3>
-    <p id="player-team"></p>
-    <p id="player-bio"></p>
-    <label for="player-season-select">Select season:</label>
-    <select id="player-season-select"></select>
-    <ul>
-      <li>Matches: <span id="detail-matches"></span></li>
-      <li>Runs: <span id="detail-runs"></span></li>
-      <li>Wickets: <span id="detail-wickets"></span></li>
-      <li>Average: <span id="detail-average"></span></li>
-    </ul>
-  </div>
+  <img id="player-photo" src="" alt="" style="display:none;">
+  <h3 id="player-name"></h3>
+  <p id="player-team"></p>
+  <p id="player-bio"></p>
+  <label for="player-season-select">Season:</label>
+  <select id="player-season-select"></select>
+  <ul>
+    <li>Matches: <span id="detail-matches"></span></li>
+    <li>Runs: <span id="detail-runs"></span></li>
+    <li>Wickets: <span id="detail-wickets"></span></li>
+    <li>Average: <span id="detail-average"></span></li>
+  </ul>
 </div>
-
-
-</section>
 
 
   <section class="et-slide" id="tab-about"><h2>About</h2>

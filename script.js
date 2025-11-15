@@ -396,9 +396,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ------------------------
-     Elements
-  ------------------------ */
+  document.addEventListener("DOMContentLoaded", () => {
+  // ===== Sample Player Data =====
+  const playerData = {
+    "John Smith": {
+      name: "John Smith",
+      team: "CIPA CITMA",
+      photo: "images/john-smith.jpg",
+      bio: "All-rounder with steady batting and reliable fielding.",
+      seasons: {
+        "2024": { matches: 10, runs: 430, wickets: 5, average: 43.0, batting: { runs:430, average:43, high:92 }, bowling: { wickets:5, average:30, best:"2/20" }, superstat: { appearance:60, bowl:22, bat:33, field:14 } },
+        "2023": { matches: 12, runs: 540, wickets: 8, average: 45.0, batting: { runs:540, average:45, high:110 }, bowling: { wickets:8, average:25.5, best:"3/28" }, superstat: { appearance:70, bowl:30, bat:40, field:16 } }
+      },
+      career: { matches:22, runs:970, wickets:13, average:44.1 }
+    },
+    "Adam Ross": {
+      name: "Adam Ross",
+      team: "CIPA CITMA",
+      photo: "images/adam-ross.jpg",
+      bio: "Promising youngster, agile in the field.",
+      seasons: {
+        "2024": { matches: 8, runs: 120, wickets: 5, average:17.1, batting:{runs:120,average:17.1,high:44}, bowling:{wickets:5,average:33.2,best:"2/11"}, superstat:{appearance:40,bowl:10,bat:44,field:12} },
+        "2023": { matches: 9, runs: 210, wickets:12, average:23.3, batting:{runs:210,average:21,high:62}, bowling:{wickets:12,average:22.5,best:"4/20"}, superstat:{appearance:50,bowl:20,bat:28,field:12} }
+      },
+      career: { matches:17, runs:330, wickets:17, average:19.4 }
+    }
+  };
+
+  // ===== DOM Elements =====
   const cards = document.querySelectorAll(".stats-card");
   const panels = {
     batting: document.getElementById("batting-panel"),
@@ -425,135 +450,104 @@ document.addEventListener("DOMContentLoaded", () => {
   const detailWickets = document.getElementById("detail-wickets");
   const detailAverage = document.getElementById("detail-average");
 
-  /* ------------------------
-     Example player data
-     Replace with your actual JSON or server data
-  ------------------------ */
-  const playerData = {
-    "John Smith": {
-      name: "John Smith",
-      team: "CIPA CITMA",
-      photo: "images/john-smith.jpg",
-      bio: "All-rounder with steady batting and reliable fielding.",
-      seasons: {
-        "2024": { matches: 10, runs: 430, wickets: 5, average: 43.0 },
-        "2023": { matches: 12, runs: 540, wickets: 8, average: 45.0 }
-      },
-      career: { matches: 22, runs: 970, wickets: 13, average: 44.1 },
-      batting: { "2024": { runs: 430, average: 43.0, high: 92 }, "2023": { runs: 540, average: 45.0, high: 110 } },
-      bowling: { "2024": { wickets: 5, average: 30.0, best: "2/20" }, "2023": { wickets: 8, average: 25.5, best: "3/28" } },
-      superstat: { "2024": { appearance: 60, bowl: 22, bat: 33, field: 14 }, "2023": { appearance: 70, bowl: 30, bat: 40, field: 16 } }
-    },
-    "Adam Ross": {
-      name: "Adam Ross",
-      team: "CIPA CITMA",
-      photo: "images/adam-ross.jpg",
-      bio: "Promising youngster, agile in the field.",
-      seasons: {
-        "2024": { matches: 8, runs: 120, wickets: 5, average: 17.1 },
-        "2023": { matches: 9, runs: 210, wickets: 12, average: 23.3 }
-      },
-      career: { matches: 17, runs: 330, wickets: 17, average: 19.4 },
-      batting: { "2024": { runs: 120, average: 17.1, high: 44 }, "2023": { runs: 210, average: 21.0, high: 62 } },
-      bowling: { "2024": { wickets: 5, average: 33.2, best: "2/11" }, "2023": { wickets: 12, average: 22.5, best: "4/20" } },
-      superstat: { "2024": { appearance: 40, bowl: 10, bat: 44, field: 12 }, "2023": { appearance: 50, bowl: 20, bat: 28, field: 12 } }
-    }
-  };
-
-  /* ------------------------
-     Helpers
-  ------------------------ */
-  function gatherSeasons() {
-    const set = new Set();
+  // ===== Helper: get all seasons in data =====
+  function getAllSeasons() {
+    const seasonSet = new Set();
     Object.values(playerData).forEach(p => {
-      if (p.seasons) Object.keys(p.seasons).forEach(s => set.add(s));
+      Object.keys(p.seasons).forEach(s => seasonSet.add(s));
     });
-    return Array.from(set).sort((a,b) => b - a);
+    return Array.from(seasonSet).sort((a,b) => b - a);
   }
 
-  function populateSeasonSelect() {
-    const seasons = gatherSeasons();
-    seasonSelect.innerHTML = '<option value="all" selected>All seasons</option>';
-    seasons.forEach(s => {
-      const opt = document.createElement('option');
+  // ===== Populate season dropdown =====
+  function populateSeasonDropdown() {
+    seasonSelect.innerHTML = '<option value="all">All Seasons</option>';
+    getAllSeasons().forEach(s => {
+      const opt = document.createElement("option");
       opt.value = s;
       opt.textContent = s;
       seasonSelect.appendChild(opt);
     });
   }
 
-  /* ------------------------
-     Build table rows
-  ------------------------ */
-  function buildTables(season='all') {
-    Object.keys(tables).forEach(type => {
-      const tbody = tables[type].querySelector('tbody');
-      tbody.innerHTML = '';
-    });
+  // ===== Build tables =====
+  function buildTables(season = "all") {
+    // clear all table bodies
+    Object.values(tables).forEach(tbl => tbl.querySelector("tbody").innerHTML = "");
 
     Object.values(playerData).forEach(player => {
       const name = player.name;
 
       // Batting
-      const batStats = season==='all' ? (player.career||{}) : (player.batting?.[season]||{runs:'-',average:'-',high:'-'});
-      const batRow = `<tr>
-        <td>${name}</td>
-        <td>${batStats.runs ?? '-'}</td>
-        <td>${batStats.average ?? '-'}</td>
-        <td>${batStats.high ?? '-'}</td>
-      </tr>`;
-      tables.batting.querySelector('tbody').insertAdjacentHTML('beforeend', batRow);
+      const bat = (season === "all") ? player.career : player.seasons[season]?.batting ?? { runs:"-", average:"-", high:"-" };
+      const batRow = document.createElement("tr");
+      batRow.innerHTML = `<td>${name}</td><td>${bat.runs}</td><td>${bat.average}</td><td>${bat.high ?? "-"}</td>`;
+      tables.batting.querySelector("tbody").appendChild(batRow);
 
       // Bowling
-      const bowlStats = season==='all' ? (player.career||{}) : (player.bowling?.[season]||{wickets:'-',average:'-',best:'-'});
-      const bowlRow = `<tr>
-        <td>${name}</td>
-        <td>${bowlStats.wickets ?? '-'}</td>
-        <td>${bowlStats.average ?? '-'}</td>
-        <td>${bowlStats.best ?? '-'}</td>
-      </tr>`;
-      tables.bowling.querySelector('tbody').insertAdjacentHTML('beforeend', bowlRow);
+      const bowl = (season === "all") ? player.career : player.seasons[season]?.bowling ?? { wickets:"-", average:"-", best:"-" };
+      const bowlRow = document.createElement("tr");
+      bowlRow.innerHTML = `<td>${name}</td><td>${bowl.wickets}</td><td>${bowl.average}</td><td>${bowl.best ?? "-"}</td>`;
+      tables.bowling.querySelector("tbody").appendChild(bowlRow);
 
       // Superstat
-      const sStats = season==='all' ? (player.superstat?.career || player.career || {}) : (player.superstat?.[season]||{appearance:0,bowl:0,bat:0,field:0});
-      const total = (Number(sStats.appearance)||0)+(Number(sStats.bowl)||0)+(Number(sStats.bat)||0)+(Number(sStats.field)||0);
-      const superRow = `<tr>
-        <td>${name}</td>
-        <td>${sStats.appearance ?? 0}</td>
-        <td>${sStats.bowl ?? 0}</td>
-        <td>${sStats.bat ?? 0}</td>
-        <td>${sStats.field ?? 0}</td>
-        <td>${total}</td>
-      </tr>`;
-      tables.superstat.querySelector('tbody').insertAdjacentHTML('beforeend', superRow);
+      const s = (season === "all") ? player.career : player.seasons[season]?.superstat ?? {};
+      const appearance = s.appearance ?? 0;
+      const bowlScore = s.bowl ?? 0;
+      const batScore = s.bat ?? 0;
+      const fieldScore = s.field ?? 0;
+      const total = appearance + bowlScore + batScore + fieldScore;
+      const superRow = document.createElement("tr");
+      superRow.innerHTML = `<td>${name}</td><td>${appearance}</td><td>${bowlScore}</td><td>${batScore}</td><td>${fieldScore}</td><td>${total}</td>`;
+      tables.superstat.querySelector("tbody").appendChild(superRow);
     });
 
-    // Reattach sorting & click handlers
-    enableSorting();
+    enableSortingForAll();
     attachRowClickHandlers();
   }
 
-  /* ------------------------
-     Sorting
-  ------------------------ */
-  function enableSorting() {
+  // ===== Cards switching =====
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      cards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+      const target = card.dataset.target;
+      Object.values(panels).forEach(p => p.classList.add("hidden"));
+      panels[target.replace("-panel","")]?.classList.remove("hidden");
+    });
+  });
+
+  // ===== Filter visible table =====
+  function filterVisibleTable() {
+    const q = searchInput.value.toLowerCase().trim();
+    const visiblePanel = Array.from(Object.values(panels)).find(p => !p.classList.contains("hidden"));
+    if (!visiblePanel) return;
+    visiblePanel.querySelectorAll("tbody tr").forEach(tr => {
+      tr.style.display = tr.innerText.toLowerCase().includes(q) ? "" : "none";
+    });
+  }
+  searchInput.addEventListener("input", filterVisibleTable);
+
+  // ===== Sorting =====
+  function enableSortingForAll() {
     document.querySelectorAll(".sortable-table").forEach(table => {
-      table.querySelectorAll("th").forEach((th, idx) => {
+      const headers = table.querySelectorAll("th");
+      const tbody = table.querySelector("tbody");
+
+      headers.forEach((th, idx) => {
         th.onclick = () => {
-          const tbody = table.querySelector("tbody");
+          const asc = !th.classList.contains("asc");
+          headers.forEach(h => h.classList.remove("asc","desc"));
+          th.classList.toggle("asc", asc);
+          th.classList.toggle("desc", !asc);
+
+          const type = th.dataset.type ?? "string";
           const rows = Array.from(tbody.querySelectorAll("tr"));
-          const type = th.dataset.type || 'string';
-          const asc = !th.classList.contains('asc');
-
-          table.querySelectorAll("th").forEach(h=>h.classList.remove('asc','desc'));
-          th.classList.toggle('asc',asc);
-          th.classList.toggle('desc',!asc);
-
-          rows.sort((a,b)=>{
-            let A = a.children[idx].innerText.trim();
-            let B = b.children[idx].innerText.trim();
-            if(type==='number'){ A=parseFloat(A)||0; B=parseFloat(B)||0; return asc?A-B:B-A;}
-            return asc? A.localeCompare(B): B.localeCompare(A);
+          rows.sort((a,b) => {
+            let A = a.children[idx].innerText;
+            let B = b.children[idx].innerText;
+            if(type==="number"){ A=parseFloat(A)||0; B=parseFloat(B)||0; return asc? A-B : B-A; }
+            return asc? A.localeCompare(B) : B.localeCompare(A);
           });
           rows.forEach(r=>tbody.appendChild(r));
         };
@@ -561,97 +555,64 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ------------------------
-     Row click for player detail
-  ------------------------ */
+  // ===== Row click → detail view =====
   function attachRowClickHandlers() {
-    document.querySelectorAll(".sortable-table tbody tr").forEach(tr=>{
-      tr.onclick = () => {
-        const playerName = tr.children[0].innerText;
-        const data = playerData[playerName];
-        if(!data) return;
+    document.querySelectorAll(".sortable-table tbody").forEach(tbody => {
+      tbody.querySelectorAll("tr").forEach(tr => {
+        tr.onclick = () => {
+          const playerName = tr.children[0].innerText;
+          const data = playerData[playerName];
+          if(!data) return;
+          // Photo
+          if(data.photo){ playerPhoto.src = data.photo; playerPhoto.style.display = ""; }
+          else playerPhoto.style.display = "none";
+          playerNameEl.textContent = data.name;
+          playerTeamEl.textContent = data.team ?? "";
+          playerBioEl.textContent = data.bio ?? "";
 
-        // photo
-        if(data.photo){ playerPhoto.src = data.photo; playerPhoto.style.display=''; }
-        else playerPhoto.style.display='none';
+          // Season select in detail
+          playerSeasonSelect.innerHTML="";
+          Object.keys(data.seasons).sort((a,b)=>b-a).forEach(s=>{
+            const opt=document.createElement("option"); opt.value=s; opt.textContent=s; playerSeasonSelect.appendChild(opt);
+          });
+          const careerOpt=document.createElement("option"); careerOpt.value="career"; careerOpt.textContent="Career"; playerSeasonSelect.appendChild(careerOpt);
+          playerSeasonSelect.value = Object.keys(data.seasons).sort((a,b)=>b-a)[0] ?? "career";
 
-        playerNameEl.textContent = data.name;
-        playerTeamEl.textContent = data.team ?? '';
-        playerBioEl.textContent = data.bio ?? '';
+          function updateDetailStats() {
+            const s = playerSeasonSelect.value;
+            const stats = (s==="career") ? data.career : data.seasons[s] ?? {};
+            detailMatches.textContent = stats.matches ?? "-";
+            detailRuns.textContent = stats.runs ?? "-";
+            detailWickets.textContent = stats.wickets ?? "-";
+            detailAverage.textContent = stats.average ?? "-";
+          }
+          playerSeasonSelect.onchange = updateDetailStats;
+          updateDetailStats();
 
-        // populate player season select
-        playerSeasonSelect.innerHTML='';
-        const seasons = data.seasons ? Object.keys(data.seasons).sort((a,b)=>b-a):[];
-        seasons.forEach(s=>{
-          const opt = document.createElement('option'); opt.value=s; opt.textContent=s;
-          playerSeasonSelect.appendChild(opt);
-        });
-        const careerOpt = document.createElement('option'); careerOpt.value='career'; careerOpt.textContent='Career';
-        playerSeasonSelect.appendChild(careerOpt);
-        playerSeasonSelect.value = seasons[0]??'career';
-
-        updatePlayerDetail(data,playerSeasonSelect.value);
-        detailView.classList.remove('hidden');
-        Object.values(panels).forEach(p=>p.classList.add('hidden'));
-      };
+          // Show detail
+          Object.values(panels).forEach(p=>p.classList.add("hidden"));
+          document.querySelector(".stats-cards").classList.add("hidden");
+          document.querySelector(".stats-controls").classList.add("hidden");
+          detailView.classList.remove("hidden");
+        };
+      });
     });
   }
 
-  function updatePlayerDetail(data,season){
-    const stats = season==='career'?data.career:data.seasons?.[season]||{};
-    detailMatches.textContent=stats.matches??'-';
-    detailRuns.textContent=stats.runs??'-';
-    detailWickets.textContent=stats.wickets??'-';
-    detailAverage.textContent=stats.average??'-';
-  }
-
-  playerSeasonSelect.addEventListener('change',()=>updatePlayerDetail(playerData[playerNameEl.textContent],playerSeasonSelect.value));
-
-  /* ------------------------
-     Cards switch panels
-  ------------------------ */
-  cards.forEach(card=>{
-    card.onclick = ()=>{
-      const targetId = card.dataset.target;
-      cards.forEach(c=>c.classList.remove('active'));
-      card.classList.add('active');
-      Object.values(panels).forEach(p=>p.classList.add('hidden'));
-      const panelToShow = document.getElementById(targetId);
-      if(panelToShow) panelToShow.classList.remove('hidden');
-    };
-  });
-
-  /* ------------------------
-     Search filter
-  ------------------------ */
-  searchInput.addEventListener('input',()=>{
-    const q = searchInput.value.toLowerCase();
-    const visiblePanel = Object.values(panels).find(p=>!p.classList.contains('hidden'));
-    if(!visiblePanel) return;
-    visiblePanel.querySelectorAll('tbody tr').forEach(tr=>{
-      tr.style.display = tr.innerText.toLowerCase().includes(q)?'':'none';
-    });
-  });
-
-  /* ------------------------
-     Back button
-  ------------------------ */
-  detailBack.onclick = ()=>{
-    detailView.classList.add('hidden');
-    document.querySelector('.stats-controls').classList.remove('hidden');
-    document.querySelector('.stats-cards').classList.remove('hidden');
-    const activePanel = document.querySelector('.stats-card.active').dataset.target;
-    document.getElementById(activePanel).classList.remove('hidden');
+  // ===== Back button =====
+  detailBack.onclick = () => {
+    detailView.classList.add("hidden");
+    document.querySelector(".stats-cards").classList.remove("hidden");
+    document.querySelector(".stats-controls").classList.remove("hidden");
+    // show active panel
+    const active = document.querySelector(".stats-card.active").dataset.target.replace("-panel","");
+    panels[active]?.classList.remove("hidden");
   };
 
-  /* ------------------------
-     Season select rebuilds tables
-  ------------------------ */
-  seasonSelect.onchange = ()=>buildTables(seasonSelect.value);
+  // ===== Season select changes table =====
+  seasonSelect.onchange = () => buildTables(seasonSelect.value);
 
-  /* ------------------------
-     Initialize
-  ------------------------ */
-  populateSeasonSelect();
-  buildTables('all');
+  // ===== Initialize =====
+  populateSeasonDropdown();
+  buildTables("all");
 });
