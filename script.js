@@ -1,147 +1,141 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ===== HERO TABS SCROLLING & ACTIVE SLIDER =====
+const tabs = document.querySelectorAll('.et-hero-tab');
+const slider = document.querySelector('.et-hero-tab-slider');
+const slides = document.querySelectorAll('.et-slide');
+const tabContainer = document.querySelector('.et-hero-tabs-container');
 
-  /* ===== HERO TABS & SCROLLING ===== */
-  const tabs = document.querySelectorAll(".et-hero-tab");
-  const slides = document.querySelectorAll(".et-slide");
-  const slider = document.querySelector(".et-hero-tab-slider");
-  const tabContainer = document.querySelector(".et-hero-tabs-container");
+function updateSlider(tab) {
+    slider.style.width = tab.offsetWidth + 'px';
+    slider.style.left = tab.offsetLeft + 'px';
+}
 
-  // Scroll smoothly to section on tab click
-  tabs.forEach(tab => {
-    tab.addEventListener("click", e => {
-      e.preventDefault();
-      const target = document.querySelector(tab.getAttribute("href"));
-      if (target) {
-        window.scrollTo({
-          top: target.offsetTop - tabContainer.offsetHeight,
-          behavior: "smooth"
+tabs.forEach(tab => {
+    tab.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(tab.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// Highlight tab on scroll
+window.addEventListener('scroll', () => {
+    let current = slides[0].id;
+    slides.forEach(slide => {
+        const top = slide.getBoundingClientRect().top;
+        if (top <= window.innerHeight / 2) {
+            current = slide.id;
+        }
+    });
+    tabs.forEach(tab => {
+        if (tab.getAttribute('href') === '#' + current) {
+            tab.classList.add('active');
+            updateSlider(tab);
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+});
+
+// Initialize slider under first tab
+updateSlider(tabs[0]);
+
+// ===== STATS CARD TOGGLE =====
+const statsCards = document.querySelectorAll('.stats-card');
+const tablePanels = document.querySelectorAll('.table-panel');
+
+statsCards.forEach(card => {
+    card.addEventListener('click', () => {
+        statsCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const target = card.dataset.target;
+        tablePanels.forEach(panel => {
+            if (panel.id === target) panel.classList.remove('hidden');
+            else panel.classList.add('hidden');
         });
-      }
     });
-  });
+});
 
-  // Update active tab and slider on scroll
-  function updateSlider() {
-    let activeIndex = slides.length - 1;
-    const scrollPos = window.scrollY + tabContainer.offsetHeight + 10;
+// ===== PLAYER DETAIL VIEW =====
+const playerDetailView = document.getElementById('player-detail-view');
+const playerBackBtn = document.getElementById('player-detail-back');
 
-    slides.forEach((slide, i) => {
-      if (scrollPos >= slide.offsetTop) activeIndex = i;
+document.querySelectorAll('.sortable-table tbody tr').forEach(row => {
+    row.addEventListener('click', () => {
+        // Here you would populate the player details dynamically
+        playerDetailView.classList.remove('hidden');
+        window.scrollTo({ top: playerDetailView.offsetTop - 70, behavior: 'smooth' });
     });
+});
 
-    tabs.forEach(t => t.classList.remove("active"));
-    tabs[activeIndex]?.classList.add("active");
+playerBackBtn.addEventListener('click', () => {
+    playerDetailView.classList.add('hidden');
+});
 
-    const rect = tabs[activeIndex]?.getBoundingClientRect();
-    const containerRect = tabContainer.getBoundingClientRect();
-    if (rect) {
-      slider.style.left = `${rect.left - containerRect.left}px`;
-      slider.style.width = `${rect.width}px`;
-    }
-  }
+// ===== RESULTS SEASON FILTER =====
+const resultsSeasonSelect = document.getElementById('results-season-select');
+const resultsTable = document.getElementById('results-table').querySelector('tbody');
 
-  window.addEventListener("scroll", updateSlider);
-  updateSlider();
-
-  // Sticky menu
-  const stickyOffset = tabContainer.offsetTop;
-  window.addEventListener("scroll", () => {
-    if (window.pageYOffset > stickyOffset) {
-      tabContainer.classList.add("et-hero-tabs-container--top");
-    } else {
-      tabContainer.classList.remove("et-hero-tabs-container--top");
-    }
-  });
-
-  /* ===== STATS PANEL SWITCHING ===== */
-  const statsCards = document.querySelectorAll(".stats-card");
-  const tablePanels = document.querySelectorAll(".table-panel");
-
-  statsCards.forEach(card => {
-    card.addEventListener("click", () => {
-      statsCards.forEach(c => c.classList.remove("active"));
-      card.classList.add("active");
-
-      const targetId = card.dataset.target;
-      tablePanels.forEach(panel => {
-        if (panel.id === targetId) panel.classList.remove("hidden");
-        else panel.classList.add("hidden");
-      });
-    });
-  });
-
-  /* ===== RESULTS FILTER BY SEASON ===== */
-  const resultsTable = document.querySelector("#results-table tbody");
-  const resultsSeasonSelect = document.querySelector("#results-season-select");
-
-  function populateSeasons() {
-    const seasons = Array.from(new Set(Array.from(resultsTable.querySelectorAll("tr")).map(tr => {
-      return tr.children[0].textContent.split("-")[0]; // Year from date
-    }))).sort().reverse();
-
-    seasons.forEach(season => {
-      const option = document.createElement("option");
-      option.value = season;
-      option.textContent = season;
-      resultsSeasonSelect.appendChild(option);
-    });
-  }
-
-  populateSeasons();
-
-  resultsSeasonSelect.addEventListener("change", () => {
+function filterResults() {
     const season = resultsSeasonSelect.value;
-    resultsTable.querySelectorAll("tr").forEach(tr => {
-      if (season === "all" || tr.children[0].textContent.startsWith(season)) {
-        tr.style.display = "";
-      } else {
-        tr.style.display = "none";
-      }
+    resultsTable.querySelectorAll('tr').forEach(row => {
+        const date = row.cells[0].textContent.trim();
+        const year = date.split('-')[0];
+        if (season === 'all' || season === year) row.style.display = '';
+        else row.style.display = 'none';
     });
-  });
+}
 
-  /* ===== SORTABLE TABLES ===== */
-  function makeSortable(table) {
-    const headers = table.querySelectorAll("th");
-    headers.forEach((th, index) => {
-      th.addEventListener("click", () => {
-        const type = th.dataset.type || "string";
-        const tbody = table.querySelector("tbody");
-        const rows = Array.from(tbody.querySelectorAll("tr"));
+// Populate season select dynamically
+const years = new Set();
+resultsTable.querySelectorAll('tr').forEach(row => {
+    years.add(row.cells[0].textContent.split('-')[0]);
+});
+[...years].sort((a,b) => b-a).forEach(year => {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    resultsSeasonSelect.appendChild(option);
+});
 
-        const asc = !th.classList.contains("asc");
-        headers.forEach(h => h.classList.remove("asc", "desc"));
-        th.classList.add(asc ? "asc" : "desc");
+resultsSeasonSelect.addEventListener('change', filterResults);
+filterResults();
 
-        rows.sort((a, b) => {
-          let valA = a.children[index].textContent.trim();
-          let valB = b.children[index].textContent.trim();
+// ===== SORTABLE TABLES =====
+function sortTable(table, col, type) {
+    const tbody = table.querySelector('tbody');
+    Array.from(tbody.querySelectorAll('tr'))
+        .sort((a, b) => {
+            let x = a.cells[col].textContent.trim();
+            let y = b.cells[col].textContent.trim();
+            if (type === 'number') { x = parseFloat(x); y = parseFloat(y); }
+            if (type === 'date') { x = new Date(x); y = new Date(y); }
+            if (x < y) return -1;
+            if (x > y) return 1;
+            return 0;
+        })
+        .forEach(tr => tbody.appendChild(tr));
+}
 
-          if (type === "number") {
-            valA = parseFloat(valA) || 0;
-            valB = parseFloat(valB) || 0;
-          } else if (type === "date") {
-            valA = new Date(valA);
-            valB = new Date(valB);
-          }
-
-          return asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+document.querySelectorAll('.sortable-table').forEach(table => {
+    const headers = table.querySelectorAll('th');
+    headers.forEach((th, i) => {
+        th.addEventListener('click', () => {
+            const type = th.dataset.type || 'string';
+            const ascending = !th.classList.contains('asc');
+            headers.forEach(h => h.classList.remove('asc','desc'));
+            th.classList.toggle('asc', ascending);
+            th.classList.toggle('desc', !ascending);
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+            rows.sort((a,b) => {
+                let x = a.cells[i].textContent.trim();
+                let y = b.cells[i].textContent.trim();
+                if (type==='number'){ x=parseFloat(x); y=parseFloat(y); }
+                if (type==='date'){ x=new Date(x); y=new Date(y); }
+                if(x<y) return ascending?-1:1;
+                if(x>y) return ascending?1:-1;
+                return 0;
+            });
+            rows.forEach(r=>table.querySelector('tbody').appendChild(r));
         });
-
-        rows.forEach(row => tbody.appendChild(row));
-      });
     });
-  }
-
-  document.querySelectorAll(".sortable-table").forEach(makeSortable);
-
-  /* ===== PLAYER DETAIL VIEW (optional) ===== */
-  const playerDetailView = document.querySelector("#player-detail-view");
-  const backBtn = document.querySelector("#player-detail-back");
-
-  backBtn?.addEventListener("click", () => {
-    playerDetailView.classList.add("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
 });
