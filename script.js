@@ -1,184 +1,192 @@
-// ================= STICKY MENU =================
+// ==== MENU STICKY + TAB HIGHLIGHT ====
 const tabsContainer = document.querySelector('.et-hero-tabs-container');
 const tabs = document.querySelectorAll('.et-hero-tab');
-const slider = document.querySelector('.et-hero-tab-slider');
-const tabOffsetTop = tabsContainer.offsetTop;
+const tabSlider = document.querySelector('.et-hero-tab-slider');
 
-window.addEventListener('scroll', () => {
-  if(window.scrollY >= tabOffsetTop) {
-    tabsContainer.classList.add('et-hero-tabs-container--top');
-  } else {
-    tabsContainer.classList.remove('et-hero-tabs-container--top');
-  }
-});
-
-// ================= TAB SWITCHING =================
-tabs.forEach(tab => {
-  tab.addEventListener('click', (e) => {
-    e.preventDefault();
-    const targetId = tab.getAttribute('href').substring(1);
-    document.getElementById(targetId).scrollIntoView({behavior:'smooth'});
-    
-    // Active tab styling
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    // Slider
-    slider.style.width = tab.offsetWidth + 'px';
-    slider.style.left = tab.offsetLeft + 'px';
-  });
-});
-
-// Set initial slider
-if(tabs.length > 0){
-  slider.style.width = tabs[0].offsetWidth + 'px';
-  slider.style.left = tabs[0].offsetLeft + 'px';
-  tabs[0].classList.add('active');
+function updateSlider(tab) {
+    const rect = tab.getBoundingClientRect();
+    const containerRect = tabsContainer.getBoundingClientRect();
+    tabSlider.style.width = rect.width + 'px';
+    tabSlider.style.left = (rect.left - containerRect.left) + 'px';
 }
 
-// ================= RESULTS DATA =================
+tabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        updateSlider(tab);
+
+        const target = document.querySelector(tab.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+
+// Initialize first tab slider
+if (tabs.length) {
+    tabs[0].classList.add('active');
+    updateSlider(tabs[0]);
+}
+
+// Sticky menu
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY || window.pageYOffset;
+    if (scrollY > tabsContainer.offsetTop) {
+        tabsContainer.classList.add('et-hero-tabs-container--top');
+    } else {
+        tabsContainer.classList.remove('et-hero-tabs-container--top');
+    }
+});
+
+// ==== RESULTS DATA AND TABLE ====
 const resultsData = [
-  {date:'2024-06-10', opponent:'Team A', venue:'Home', result:'Win', season:'2024'},
-  {date:'2024-07-03', opponent:'Team B', venue:'Away', result:'Loss', season:'2024'},
-  {date:'2023-05-12', opponent:'Team C', venue:'Home', result:'Win', season:'2023'},
-  {date:'2022-06-18', opponent:'Team D', venue:'Away', result:'Tie', season:'2022'}
+    { date: "2024-06-10", opponent: "Team A", venue: "Home", result: "Win", season: "2024" },
+    { date: "2024-07-03", opponent: "Team B", venue: "Away", result: "Loss", season: "2024" },
+    { date: "2023-05-12", opponent: "Team C", venue: "Home", result: "Win", season: "2023" },
+    { date: "2022-06-18", opponent: "Team D", venue: "Away", result: "Tie", season: "2022" }
 ];
 
 const resultsTableBody = document.querySelector('#results-table tbody');
-const resultsSeasonSelect = document.getElementById('results-season-select');
+const seasonSelect = document.querySelector('#results-season-select');
 
-const seasons = [...new Set(resultsData.map(r => r.season))];
-seasons.forEach(season => {
-  const opt = document.createElement('option');
-  opt.value = season;
-  opt.textContent = season;
-  resultsSeasonSelect.appendChild(opt);
-});
-
-function renderResults(season='all'){
-  resultsTableBody.innerHTML = '';
-  const filtered = season==='all' ? resultsData : resultsData.filter(r => r.season===season);
-  filtered.forEach(r=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${r.date}</td><td>${r.opponent}</td><td>${r.venue}</td><td>${r.result}</td>`;
-    resultsTableBody.appendChild(tr);
-  });
-  updateResultsChart(filtered);
-}
-
-resultsSeasonSelect.addEventListener('change', () => {
-  renderResults(resultsSeasonSelect.value);
-});
-
-renderResults(); // initial
-
-// ================= RESULTS PIE CHART =================
-const ctx = document.getElementById('results-pie-chart').getContext('2d');
-let resultsChart;
-
-function updateResultsChart(filteredData){
-  const counts = {Win:0, Loss:0, Tie:0};
-  filteredData.forEach(r => {
-    if(counts[r.result]!==undefined) counts[r.result]++;
-  });
-
-  const data = {
-    labels: ['Win','Loss','Tie'],
-    datasets:[{
-      data:[counts.Win, counts.Loss, counts.Tie],
-      backgroundColor:['#4caf50','#f44336','#ff9800']
-    }]
-  };
-
-  if(resultsChart) resultsChart.destroy();
-  resultsChart = new Chart(ctx, {
-    type:'pie',
-    data:data,
-    options:{ responsive:true, plugins:{ legend:{ position:'bottom' } } }
-  });
-}
-
-// ================= STATS DATA =================
-const statsData = {
-  batting: {
-    '2024': [
-      {player:'Alice', runs:300, average:30, highScore:70},
-      {player:'Bob', runs:250, average:25, highScore:60}
-    ],
-    '2023': [
-      {player:'Alice', runs:200, average:25, highScore:50},
-      {player:'Bob', runs:180, average:20, highScore:45}
-    ]
-  },
-  bowling: {
-    '2024': [
-      {player:'Charlie', wickets:15, average:18, best:'4/20'},
-      {player:'Dana', wickets:12, average:20, best:'3/15'}
-    ],
-    '2023': [
-      {player:'Charlie', wickets:10, average:22, best:'3/25'},
-      {player:'Dana', wickets:8, average:25, best:'2/18'}
-    ]
-  },
-  superstat: {
-    '2024': [
-      {player:'Alice', appearance:10, bowling:0, batting:30, fielding:5, total:45},
-      {player:'Charlie', appearance:8, bowling:15, batting:10, fielding:3, total:38}
-    ],
-    '2023': [
-      {player:'Alice', appearance:8, bowling:0, batting:20, fielding:3, total:31},
-      {player:'Charlie', appearance:7, bowling:10, batting:5, fielding:2, total:24}
-    ]
-  }
-};
-
-const statsSeasonSelect = document.getElementById('stats-season-select');
-Object.keys(statsData.batting).forEach(season => {
-  const opt = document.createElement('option');
-  opt.value = season;
-  opt.textContent = season;
-  statsSeasonSelect.appendChild(opt);
-});
-
-const tablePanels = {
-  batting: document.querySelector('#batting-panel tbody'),
-  bowling: document.querySelector('#bowling-panel tbody'),
-  superstat: document.querySelector('#superstat-panel tbody')
-};
-
-function renderStats(season='2024'){
-  ['batting','bowling','superstat'].forEach(type => {
-    const tbody = tablePanels[type];
-    tbody.innerHTML = '';
-    statsData[type][season].forEach(p=>{
-      let html = '';
-      if(type==='batting'){
-        html = `<tr><td>${p.player}</td><td>${p.runs}</td><td>${p.average}</td><td>${p.highScore}</td></tr>`;
-      } else if(type==='bowling'){
-        html = `<tr><td>${p.player}</td><td>${p.wickets}</td><td>${p.average}</td><td>${p.best}</td></tr>`;
-      } else {
-        html = `<tr><td>${p.player}</td><td>${p.appearance}</td><td>${p.bowling}</td><td>${p.batting}</td><td>${p.fielding}</td><td>${p.total}</td></tr>`;
-      }
-      tbody.innerHTML += html;
+function populateSeasonSelect() {
+    const seasons = [...new Set(resultsData.map(r => r.season))].sort((a,b)=>b-a);
+    seasons.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        option.textContent = s;
+        seasonSelect.appendChild(option);
     });
-  });
 }
 
-statsSeasonSelect.addEventListener('change', ()=>renderStats(statsSeasonSelect.value));
-renderStats(statsSeasonSelect.value);
+function populateResultsTable(season='all') {
+    resultsTableBody.innerHTML = '';
+    const filtered = season === 'all' ? resultsData : resultsData.filter(r => r.season === season);
+    filtered.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.date}</td><td>${r.opponent}</td><td>${r.venue}</td><td>${r.result}</td>`;
+        resultsTableBody.appendChild(tr);
+    });
+    updatePieChart(filtered);
+}
 
-// ================= STATS TAB SWITCH =================
-document.querySelectorAll('.stats-card').forEach(card=>{
-  card.addEventListener('click', ()=>{
-    document.querySelectorAll('.stats-card').forEach(c=>c.classList.remove('active'));
-    card.classList.add('active');
-    document.querySelectorAll('.table-panel').forEach(panel=>panel.classList.add('hidden'));
-    document.getElementById(card.dataset.target).classList.remove('hidden');
-  });
+// ==== PIE CHART ====
+let pieChart;
+const pieCtx = document.getElementById('results-pie-chart').getContext('2d');
+function updatePieChart(data) {
+    const counts = { Win: 0, Loss: 0, Tie: 0 };
+    data.forEach(r => counts[r.result] = (counts[r.result] || 0) + 1);
+
+    const chartData = {
+        labels: ['Win', 'Loss', 'Tie'],
+        datasets: [{
+            data: [counts.Win, counts.Loss, counts.Tie],
+            backgroundColor: ['#4caf50','#f44336','#ff9800']
+        }]
+    };
+
+    if(pieChart) pieChart.destroy();
+    pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: chartData,
+        options: { responsive:true, plugins:{legend:{position:'bottom'}} }
+    });
+}
+
+seasonSelect.addEventListener('change', () => {
+    populateResultsTable(seasonSelect.value);
 });
 
-// ================= PLAYER DETAIL VIEW (example toggle) =================
-const playerDetailView = document.getElementById('player-detail-view');
-document.getElementById('player-detail-back').addEventListener('click', ()=>{
-  playerDetailView.classList.add('hidden');
+// ==== STATS DATA AND TABLES ====
+const statsData = {
+    "2024": {
+        batting: [
+            { player:"Alice", runs:250, average:25.0, highScore:50 },
+            { player:"Bob", runs:180, average:18.0, highScore:40 }
+        ],
+        bowling: [
+            { player:"Alice", wickets:5, average:20, best:"2/15" },
+            { player:"Bob", wickets:8, average:15, best:"4/20" }
+        ],
+        superstat: [
+            { player:"Alice", appearanceScore:8, bowlingScore:5, battingScore:7, fieldingScore:6, total:26 },
+            { player:"Bob", appearanceScore:9, bowlingScore:8, battingScore:6, fieldingScore:5, total:28 }
+        ]
+    },
+    "2023": {
+        batting: [
+            { player:"Charlie", runs:300, average:30.0, highScore:60 }
+        ],
+        bowling: [
+            { player:"Charlie", wickets:10, average:18, best:"5/25" }
+        ],
+        superstat: [
+            { player:"Charlie", appearanceScore:10, bowlingScore:9, battingScore:8, fieldingScore:7, total:34 }
+        ]
+    }
+};
+
+const statsSeasonSelect = document.querySelector('#stats-season-select');
+const statsCards = document.querySelectorAll('.stats-card');
+const tablePanels = document.querySelectorAll('.table-panel');
+
+function populateStatsSeasonSelect() {
+    const seasons = Object.keys(statsData).sort((a,b)=>b-a);
+    seasons.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        option.textContent = s;
+        statsSeasonSelect.appendChild(option);
+    });
+}
+
+function populateStatsTables(season) {
+    // Batting
+    const battingBody = document.querySelector('#batting-table tbody');
+    battingBody.innerHTML = '';
+    statsData[season].batting.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.player}</td><td>${p.runs}</td><td>${p.average}</td><td>${p.highScore}</td>`;
+        battingBody.appendChild(tr);
+    });
+    // Bowling
+    const bowlingBody = document.querySelector('#bowling-table tbody');
+    bowlingBody.innerHTML = '';
+    statsData[season].bowling.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.player}</td><td>${p.wickets}</td><td>${p.average}</td><td>${p.best}</td>`;
+        bowlingBody.appendChild(tr);
+    });
+    // Superstat
+    const superBody = document.querySelector('#superstat-table tbody');
+    superBody.innerHTML = '';
+    statsData[season].superstat.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.player}</td><td>${p.appearanceScore}</td><td>${p.bowlingScore}</td><td>${p.battingScore}</td><td>${p.fieldingScore}</td><td>${p.total}</td>`;
+        superBody.appendChild(tr);
+    });
+}
+
+// Stats panel switching
+statsCards.forEach(card => {
+    card.addEventListener('click', () => {
+        statsCards.forEach(c=>c.classList.remove('active'));
+        card.classList.add('active');
+        const target = card.dataset.target;
+        tablePanels.forEach(p=>{
+            p.id === target ? p.classList.remove('hidden') : p.classList.add('hidden');
+        });
+    });
 });
+
+statsSeasonSelect.addEventListener('change', () => {
+    populateStatsTables(statsSeasonSelect.value);
+});
+
+// ==== INITIALIZATION ====
+populateSeasonSelect();
+populateResultsTable('all');
+populateStatsSeasonSelect();
+populateStatsTables(statsSeasonSelect.value);
