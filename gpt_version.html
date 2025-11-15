@@ -80,74 +80,144 @@
 
 </section>
 
-    <section class="et-slide" id="tab-stats">
-  <h2>Stats</h2>
+  <section id="stats-section" class="et-slide">
+  <div class="stats-inner">
 
-  <!-- Filter + Table -->
-<div id="stats-view">
-  <div class="stats-filter-container">
-    <input type="text" id="stats-filter" placeholder="Search players...">
+    <!-- Header -->
+    <div class="stats-header">
+      <h2>Statistics Dashboard</h2>
+      <p class="stats-intro">Quick summary cards — click a card to open the detailed table.</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="stats-cards">
+      <button class="stats-card active" data-target="batting">
+        <div class="card-title">Batting</div>
+        <div class="card-sub">Top run totals</div>
+      </button>
+
+      <button class="stats-card" data-target="bowling">
+        <div class="card-title">Bowling</div>
+        <div class="card-sub">Top wickets</div>
+      </button>
+
+      <button class="stats-card" data-target="superstat">
+        <div class="card-title">Superstat</div>
+        <div class="card-sub">Appearance / Bat / Bowl / Field</div>
+      </button>
+    </div>
+
+    <!-- Filter bar (shared) -->
+    <div class="stats-controls">
+      <div class="controls-left">
+        <label for="stats-season-select" class="visually-hidden">Season</label>
+        <select id="stats-season-select" class="small-select">
+          <option value="all" selected>All seasons</option>
+        </select>
+      </div>
+
+      <div class="controls-right">
+        <input id="stats-search" type="search" placeholder="Filter players..." />
+      </div>
+    </div>
+
+    <!-- Dashboard area: tables + chart placeholder -->
+    <div class="stats-dashboard">
+
+      <!-- Table wrapper: batting -->
+      <div class="table-panel" id="batting-panel">
+        <div class="stats-table-container">
+          <table id="batting-table" class="sortable-table">
+            <thead>
+              <tr>
+                <th data-type="string">Player</th>
+                <th data-type="number">Runs</th>
+                <th data-type="number">Average</th>
+                <th data-type="number">High Score</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- bowling -->
+      <div class="table-panel hidden" id="bowling-panel">
+        <div class="stats-table-container">
+          <table id="bowling-table" class="sortable-table">
+            <thead>
+              <tr>
+                <th data-type="string">Player</th>
+                <th data-type="number">Wickets</th>
+                <th data-type="number">Average</th>
+                <th data-type="string">Best</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- superstat -->
+      <div class="table-panel hidden" id="superstat-panel">
+        <div class="stats-table-container">
+          <table id="superstat-table" class="sortable-table">
+            <thead>
+              <tr>
+                <th data-type="string">Player</th>
+                <th data-type="number">Appearance Score</th>
+                <th data-type="number">Bowling Score</th>
+                <th data-type="number">Batting Score</th>
+                <th data-type="number">Fielding Score</th>
+                <th data-type="number">Total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div> <!-- /stats-dashboard -->
+
+    <!-- Player detail view (hidden by default) -->
+    <div id="player-detail-view" class="player-detail hidden" aria-hidden="true">
+      <button id="player-detail-back" class="back-btn">← Back</button>
+
+      <div class="player-detail-inner">
+        <div class="player-photo-wrap">
+          <img id="player-photo" src="" alt="Player photo" />
+        </div>
+
+        <div class="player-meta">
+          <h3 id="player-name"></h3>
+          <p id="player-team" class="muted"></p>
+          <p id="player-bio"></p>
+
+          <div class="player-season-row">
+            <label for="player-season-select">Season</label>
+            <select id="player-season-select"></select>
+          </div>
+
+          <table id="player-stats-detail" class="detail-stats">
+            <thead>
+              <tr><th>Matches</th><th>Runs</th><th>Wickets</th><th>Average</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="detail-matches">-</td>
+                <td id="detail-runs">-</td>
+                <td id="detail-wickets">-</td>
+                <td id="detail-average">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <div class="stats-table-container">
-    <table id="stats-table" class="sortable-table" data-filter="#stats-filter">
-      <thead>
-        <tr>
-          <th data-type="string">Player</th>
-          <th data-type="number">Matches</th>
-          <th data-type="number">Runs</th>
-          <th data-type="number">Wickets</th>
-        </tr>
-      </thead>
-      <tbody>
-        <<tr
-  data-player="Andy Spurr"
-  data-matches="10"
-  data-runs="430"
-  data-wickets="5"
-  data-bio="Andy Spurr is an all-rounder known for consistent batting and reliable fielding."
-  data-team="CIPA CC"
-  data-photo="images/andy_spurr.jpg"
-  data-career="2011–present"
->
-  <td>Andy Spurr</td>
-  <td>10</td>
-  <td>430</td>
-  <td>5</td>
-</tr>
-
-        </tr>
-        <tr data-player="Chris Milton" data-matches="11" data-runs="290" data-wickets="15">
-          <td>Chris Milton</td><td>11</td><td>290</td><td>15</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div id="player-detail-view" class="hidden">
-  <button id="back-to-table" class="back-btn">← Back</button>
-
-  <div class="player-header">
-    <img id="player-photo" src="" alt="Player photo" />
-    <h2 id="player-name"></h2>
-    <p id="player-team"></p>
-  </div>
-
-  <div class="player-meta">
-    <p><strong>Career:</strong> <span id="detail-career"></span></p>
-    <p><strong>Matches:</strong> <span id="detail-matches"></span></p>
-    <p><strong>Runs:</strong> <span id="detail-runs"></span></p>
-    <p><strong>Wickets:</strong> <span id="detail-wickets"></span></p>
-  </div>
-
-  <div class="player-bio">
-    <h3>Profile</h3>
-    <p id="player-bio"></p>
-  </div>
-</div>
-
 </section>
+
   <section class="et-slide" id="tab-about"><h2>About</h2>
  <p> CIPA-CITMA CC play friendly mid-week matches against other office-based teams. The membership is primarily patent and trademark attorneys, but there are a few ringers floating around.</p>
 <h3>Matches</h3>
