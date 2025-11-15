@@ -1,37 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   /* ========================
-     HERO TABS + SLIDER
+     HERO TABS + SLIDER + SCROLL
      ======================== */
   const tabs = document.querySelectorAll(".et-hero-tab");
   const slides = document.querySelectorAll(".et-slide");
   const slider = document.querySelector(".et-hero-tab-slider");
   const tabContainer = document.querySelector(".et-hero-tabs-container");
-
-  // Show all main slides initially (except hidden panels)
-  slides.forEach(slide => slide.style.display = "block");
-
-  // Position slider under active tab
-  const activeTab = document.querySelector(".et-hero-tab.active");
-  if (activeTab) moveSlider(activeTab);
-
-  // Tab click event
-  tabs.forEach(tab => {
-    tab.addEventListener("click", e => {
-      e.preventDefault();
-
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-
-      slides.forEach(slide => {
-        slide.style.display = "none";
-      });
-
-      const target = document.querySelector(tab.getAttribute("href"));
-      if (target) target.style.display = "block";
-
-      moveSlider(tab);
-    });
-  });
 
   function moveSlider(tab) {
     const rect = tab.getBoundingClientRect();
@@ -39,6 +13,38 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.style.left = `${rect.left - containerRect.left}px`;
     slider.style.width = `${rect.width}px`;
   }
+
+  // Click tabs to scroll to section
+  tabs.forEach(tab => {
+    tab.addEventListener("click", e => {
+      e.preventDefault();
+      const target = document.querySelector(tab.getAttribute("href"));
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - tabContainer.offsetHeight,
+          behavior: "smooth"
+        });
+      }
+    });
+  });
+
+  // Update slider as you scroll
+  function updateActiveTab() {
+    let currentIndex = slides.length - 1;
+    const scrollPos = window.scrollY + tabContainer.offsetHeight + 10;
+    slides.forEach((slide, i) => {
+      if (scrollPos >= slide.offsetTop) currentIndex = i;
+    });
+
+    tabs.forEach(t => t.classList.remove("active"));
+    if (tabs[currentIndex]) {
+      tabs[currentIndex].classList.add("active");
+      moveSlider(tabs[currentIndex]);
+    }
+  }
+
+  window.addEventListener("scroll", updateActiveTab);
+  updateActiveTab(); // initial
 
   /* ========================
      STICKY MENU
@@ -75,14 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultsTable = document.getElementById("results-table");
   const seasonSelect = document.getElementById("results-season-select");
 
-  // Collect unique seasons from results table
   const seasons = new Set();
   Array.from(resultsTable.querySelectorAll("tbody tr")).forEach(row => {
     const year = new Date(row.cells[0].textContent).getFullYear();
     seasons.add(year);
   });
 
-  // Populate season select
   Array.from(seasons).sort((a,b)=>b-a).forEach(year => {
     const option = document.createElement("option");
     option.value = year;
@@ -138,6 +142,5 @@ document.addEventListener("DOMContentLoaded", () => {
     resultsChart.update();
   }
 
-  // Initialize chart
   updateResultsChart();
 });
