@@ -8,9 +8,10 @@ body {
 h1 {
   font-family: "Bodoni Moda", serif;
   font-style: italic;
-  letter-spacing: 0.5em; /* adjust for more or less spacing */
+  letter-spacing: 0.5em;
   font-weight: 400;
   font-size: 3em;
+  margin: 0.4em 0;
 }
 
 h2 {
@@ -20,7 +21,7 @@ h2 {
   letter-spacing: 0.12em;
   text-align: center;
   margin: 0;
-  padding-top: 1.5em; /* spacing from top of section */
+  padding-top: 1.5em;
   color: #222;
   font-size: 1.5rem;
 }
@@ -30,11 +31,9 @@ h3 {
   font-weight: normal;
   letter-spacing: 0.05em;
   font-size: 1em;
+  margin: 0.4em 0;
 }
-h1, h3 {
 
-    margin: 0.4em 0;
-}
 a {
   text-decoration: none;
 }
@@ -56,7 +55,6 @@ a {
   overflow: hidden;
 }
 
-/* Optional dark overlay for better contrast */
 .et-hero-tabs::before {
   content: "";
   position: absolute;
@@ -86,14 +84,11 @@ a {
   background: rgba(255, 255, 255, 0.95);
   transition: all 0.2s ease;
   z-index: 5;
-  box-shadow: none;
 }
 
-/* ===== STICKY MENU (AFTER SCROLL) ===== */
 .et-hero-tabs-container--top {
   position: fixed;
   top: 0;
-  bottom: auto;
   left: 0;
   right: 0;
   background: #fff;
@@ -101,17 +96,19 @@ a {
   z-index: 1000;
 }
 
-/* ===== TABS ===== */
 .et-hero-tab {
   color: #333;
   padding: 8px 10px;
   position: relative;
   font-weight: 500;
   transition: color 0.25s ease;
+  cursor: pointer;
 }
+
 .et-hero-tab:hover {
   color: #0077cc;
 }
+
 .et-hero-tab.active {
   color: #0077cc;
   font-weight: 600;
@@ -145,11 +142,13 @@ a {
 .et-slide:nth-child(even) {
   background: #fafafa;
 }
+
 .et-slide h1 {
   color: #222;
 }
-/* ===== TABLES (Fixtures / Results / Stats etc.) ===== */
-.stats-table-container {
+
+/* ===== TABLES ===== */
+.table-container {
   width: 100%;
   overflow-x: auto;
   margin: 2rem 0;
@@ -165,6 +164,7 @@ a {
   overflow: hidden;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
 }
 
 .sortable-table thead {
@@ -193,37 +193,37 @@ a {
   background-color: #e0e0e0;
 }
 
-/* Sort arrow indicators */
 .sortable-table th.asc::after {
   content: " ▲";
   font-size: 0.75rem;
 }
+
 .sortable-table th.desc::after {
   content: " ▼";
   font-size: 0.75rem;
 }
 
-/* Zebra striping */
 .sortable-table tbody tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-/* Hover highlight */
 .sortable-table tbody tr:hover {
   background-color: #f1f1f1;
 }
 
+/* ===== HIDDEN ELEMENTS ===== */
 .hidden {
   display: none;
 }
 
+/* ===== PLAYER DETAIL VIEW ===== */
 #player-detail-view {
   width: 90%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 40px auto;
   background: #fff;
   padding: 2rem;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   text-align: center;
 }
@@ -236,26 +236,7 @@ a {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.back-btn:hover {
-  text-decoration: underline;
-}
-
-.player-stats p {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
-}
-#player-detail-view {
-  width: 90%;
-  max-width: 700px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .player-header {
@@ -293,16 +274,8 @@ a {
   letter-spacing: 0.05em;
 }
 
-.back-btn {
-  background: none;
-  border: none;
-  color: #0077cc;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
+/* ===== FILTER INPUTS ===== */
+.stats-filter-container,
 .results-filter-container {
   position: sticky;
   top: 70px;
@@ -319,73 +292,8 @@ a {
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
+#stats-filter,
 #results-season-select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-#results-season-select:focus {
-  border-color: #0077cc;
-  outline: none;
-  box-shadow: 0 0 6px rgba(0,119,204,0.3);
-}
-
-.results-table-container {
-  width: 90%;
-  max-width: 900px;
-  margin: 20px auto;
-  overflow-x: auto;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-#results-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#results-table th, #results-table td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-#results-table tr:nth-child(even) {
-  background: #fafafa;
-}
-
-#results-table tr:hover {
-  background: #f0f8ff;
-}
-
-.results-chart-container {
-  width: 90%;
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-
-/* ===== STICKY FILTER BAR ===== */
-.stats-filter-container {
-  position: sticky;
-  top: 70px; /* Adjust to match your menu height */
-  z-index: 5;
-  width: 90%;
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: flex-end;
-  background: #fff;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-#stats-filter {
-  width: 250px;
   padding: 10px 14px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -393,14 +301,17 @@ a {
   transition: all 0.2s ease;
 }
 
-#stats-filter:focus {
+#stats-filter:focus,
+#results-season-select:focus {
   border-color: #0077cc;
   outline: none;
   box-shadow: 0 0 6px rgba(0,119,204,0.3);
 }
+
+/* ===== RESULTS DASHBOARD ===== */
 .results-dashboard {
   display: flex;
-  flex-wrap: wrap; /* allow stacking on small screens */
+  flex-wrap: wrap;
   justify-content: space-between;
   width: 90%;
   max-width: 1000px;
@@ -409,16 +320,45 @@ a {
 }
 
 .results-table-wrapper {
-  flex: 1 1 60%; /* table takes ~60% of width */
+  flex: 1 1 60%;
   min-width: 300px;
   overflow-x: auto;
 }
 
 .results-chart-container {
-  flex: 1 1 35%; /* chart takes ~35% of width */
+  flex: 1 1 35%;
   min-width: 250px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
 }
-/* Section title */
+
+/* ===== STATS CARDS ===== */
+.stats-cards {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stats-card {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.stats-card.active {
+  background: #4caf50;
+  color: white;
+}
+
+/* ===== TABLE PANELS ===== */
+.table-panel.hidden {
+  display: none;
+}
+
+/* Section title override */
 #stats h2 {
   font-family: "Bodoni Moda", serif;
   font-style: italic;
@@ -430,13 +370,3 @@ a {
   color: #222;
   font-size: 1.5rem;
 }
-
-.stats-cards { display:flex; gap:10px; margin-bottom:10px; }
-.stats-card { padding:5px 10px; border:1px solid #ccc; cursor:pointer; border-radius:4px; background:#f5f5f5; }
-.stats-card.active { background:#4caf50; color:white; }
-.table-panel.hidden { display:none; }
-.sortable-table { width:100%; border-collapse:collapse; margin-bottom:20px; }
-.sortable-table th, .sortable-table td { border:1px solid #ccc; padding:5px; text-align:left; cursor:pointer; }
-.sortable-table th.asc::after { content:" ▲"; }
-.sortable-table th.desc::after { content:" ▼"; }
-#player-detail-view.hidden { display:none; }
