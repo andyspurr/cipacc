@@ -1,12 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CIPA CITMA Cricket Club</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIPA CITMA Cricket Club</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -21,63 +21,61 @@
     <a class="et-hero-tab" href="#tab-results">Results</a>
     <a class="et-hero-tab" href="#tab-stats">Stats</a>
     <a class="et-hero-tab" href="#tab-about">About</a>
-     <a class="et-hero-tab" href="#tab-other">Other</a>
     <span class="et-hero-tab-slider"></span>
   </div>
 </section>
 
 <main class="et-main">
 
-  <!-- FIXTURES -->
+  <!-- ===== FIXTURES ===== -->
   <section class="et-slide" id="tab-fixtures">
     <h2>Fixtures</h2>
     <div class="stats-table-container">
       <table id="fixtures-table" class="sortable-table">
         <thead>
           <tr>
-            <th data-type="date">Date</th>
-            <th data-type="string">Opponent</th>
-            <th data-type="string">Location</th>
-            <th data-type="string">Start time</th>
-            <th data-type="string">Form</th>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Location</th>
+            <th>Start Time</th>
+            <th>Form</th>
           </tr>
         </thead>
-        <tbody>
-          <tr><td>2025-05-01</td><td>Team X</td><td>Ally Pally</td><td>6pm</td><td>L W W L</td></tr>
-          <tr><td>2025-05-08</td><td>Team Y</td><td>Home</td><td>6pm</td><td>W W L W</td></tr>
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
   </section>
 
-  <!-- RESULTS -->
+  <!-- ===== RESULTS ===== -->
   <section class="et-slide" id="tab-results">
     <h2>Results</h2>
-
     <div class="results-filter-container">
       <label for="results-season-select">Season:</label>
       <select id="results-season-select"></select>
     </div>
 
-    <div class="results-dashboard">
-      <div class="results-table-wrapper">
-        <table id="results-table">
-          <thead>
-            <tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Result</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="results-chart-container">
-        <canvas id="results-pie-chart"></canvas>
-      </div>
+    <div class="results-table-container">
+      <table id="results-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Venue</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="results-chart-container">
+      <canvas id="results-pie-chart"></canvas>
     </div>
   </section>
 
-  <!-- STATS -->
-  <section class="et-slide" id="tab-stats">
+  <!-- ===== STATS ===== -->
+  <section id="tab-stats" class="stats-section">
     <h2>Player Stats</h2>
-
     <div class="stats-controls">
       <label for="stats-season-select">Season:</label>
       <select id="stats-season-select"></select>
@@ -93,7 +91,12 @@
     <div class="table-panel" id="batting-panel">
       <table id="batting-table" class="sortable-table">
         <thead>
-          <tr><th>Player</th><th>Runs</th><th>Average</th><th>High Score</th></tr>
+          <tr>
+            <th>Player</th>
+            <th>Runs</th>
+            <th>Average</th>
+            <th>High Score</th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -102,7 +105,12 @@
     <div class="table-panel hidden" id="bowling-panel">
       <table id="bowling-table" class="sortable-table">
         <thead>
-          <tr><th>Player</th><th>Wickets</th><th>Average</th><th>Best</th></tr>
+          <tr>
+            <th>Player</th>
+            <th>Wickets</th>
+            <th>Average</th>
+            <th>Best</th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -111,36 +119,27 @@
     <div class="table-panel hidden" id="superstat-panel">
       <table id="superstat-table" class="sortable-table">
         <thead>
-          <tr><th>Player</th><th>Appearance Score</th><th>Bowling Score</th><th>Batting Score</th><th>Fielding Score</th><th>Total</th></tr>
+          <tr>
+            <th>Player</th>
+            <th>Appearance Score</th>
+            <th>Bowling Score</th>
+            <th>Batting Score</th>
+            <th>Fielding Score</th>
+            <th>Total</th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
   </section>
 
-  <!-- ABOUT -->
+  <!-- ===== ABOUT ===== -->
   <section class="et-slide" id="tab-about">
     <h2>About</h2>
-    <p>CIPA-CITMA CC play friendly mid-week matches...</p>
+    <p>CIPA-CITMA CC play friendly mid-week matches against other office-based teams...</p>
   </section>
 
 </main>
-<!-- Player Detail View -->
-<div id="player-detail-view" class="hidden">
-  <button id="player-detail-back">← Back to tables</button>
-  <img id="player-photo" src="" alt="" style="display:none;">
-  <h3 id="player-name"></h3>
-  <p id="player-team"></p>
-  <p id="player-bio"></p>
-  <label for="player-season-select">Season:</label>
-  <select id="player-season-select"></select>
-  <ul>
-    <li>Matches: <span id="detail-matches"></span></li>
-    <li>Runs: <span id="detail-runs"></span></li>
-    <li>Wickets: <span id="detail-wickets"></span></li>
-    <li>Average: <span id="detail-average"></span></li>
-  </ul>
-</div>
 
 <script src="script.js"></script>
 </body>
