@@ -1,20 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* ========================
-     HERO TABS + SLIDER + SCROLL
-     ======================== */
+
+  /* ===== HERO TABS & SCROLLING ===== */
   const tabs = document.querySelectorAll(".et-hero-tab");
   const slides = document.querySelectorAll(".et-slide");
   const slider = document.querySelector(".et-hero-tab-slider");
   const tabContainer = document.querySelector(".et-hero-tabs-container");
 
-  function moveSlider(tab) {
-    const rect = tab.getBoundingClientRect();
-    const containerRect = tab.parentElement.getBoundingClientRect();
-    slider.style.left = `${rect.left - containerRect.left}px`;
-    slider.style.width = `${rect.width}px`;
-  }
-
-  // Click tabs to scroll to section
+  // Scroll smoothly to section on tab click
   tabs.forEach(tab => {
     tab.addEventListener("click", e => {
       e.preventDefault();
@@ -28,27 +20,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Update slider as you scroll
-  function updateActiveTab() {
-    let currentIndex = slides.length - 1;
+  // Update active tab and slider on scroll
+  function updateSlider() {
+    let activeIndex = slides.length - 1;
     const scrollPos = window.scrollY + tabContainer.offsetHeight + 10;
+
     slides.forEach((slide, i) => {
-      if (scrollPos >= slide.offsetTop) currentIndex = i;
+      if (scrollPos >= slide.offsetTop) activeIndex = i;
     });
 
     tabs.forEach(t => t.classList.remove("active"));
-    if (tabs[currentIndex]) {
-      tabs[currentIndex].classList.add("active");
-      moveSlider(tabs[currentIndex]);
+    tabs[activeIndex]?.classList.add("active");
+
+    const rect = tabs[activeIndex]?.getBoundingClientRect();
+    const containerRect = tabContainer.getBoundingClientRect();
+    if (rect) {
+      slider.style.left = `${rect.left - containerRect.left}px`;
+      slider.style.width = `${rect.width}px`;
     }
   }
 
-  window.addEventListener("scroll", updateActiveTab);
-  updateActiveTab(); // initial
+  window.addEventListener("scroll", updateSlider);
+  updateSlider();
 
-  /* ========================
-     STICKY MENU
-     ======================== */
+  // Sticky menu
   const stickyOffset = tabContainer.offsetTop;
   window.addEventListener("scroll", () => {
     if (window.pageYOffset > stickyOffset) {
@@ -58,89 +53,95 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* ========================
-     STATS CARDS SWITCH PANELS
-     ======================== */
-  const cards = document.querySelectorAll(".stats-card");
-  cards.forEach(card => {
+  /* ===== STATS PANEL SWITCHING ===== */
+  const statsCards = document.querySelectorAll(".stats-card");
+  const tablePanels = document.querySelectorAll(".table-panel");
+
+  statsCards.forEach(card => {
     card.addEventListener("click", () => {
-      cards.forEach(c => c.classList.remove("active"));
+      statsCards.forEach(c => c.classList.remove("active"));
       card.classList.add("active");
 
-      const targetPanel = document.getElementById(card.dataset.target);
-      document.querySelectorAll(".table-panel").forEach(panel => {
-        panel.classList.add("hidden");
+      const targetId = card.dataset.target;
+      tablePanels.forEach(panel => {
+        if (panel.id === targetId) panel.classList.remove("hidden");
+        else panel.classList.add("hidden");
       });
-      targetPanel.classList.remove("hidden");
     });
   });
 
-  /* ========================
-     RESULTS SEASON FILTER
-     ======================== */
-  const resultsTable = document.getElementById("results-table");
-  const seasonSelect = document.getElementById("results-season-select");
+  /* ===== RESULTS FILTER BY SEASON ===== */
+  const resultsTable = document.querySelector("#results-table tbody");
+  const resultsSeasonSelect = document.querySelector("#results-season-select");
 
-  const seasons = new Set();
-  Array.from(resultsTable.querySelectorAll("tbody tr")).forEach(row => {
-    const year = new Date(row.cells[0].textContent).getFullYear();
-    seasons.add(year);
-  });
+  function populateSeasons() {
+    const seasons = Array.from(new Set(Array.from(resultsTable.querySelectorAll("tr")).map(tr => {
+      return tr.children[0].textContent.split("-")[0]; // Year from date
+    }))).sort().reverse();
 
-  Array.from(seasons).sort((a,b)=>b-a).forEach(year => {
-    const option = document.createElement("option");
-    option.value = year;
-    option.textContent = year;
-    seasonSelect.appendChild(option);
-  });
-
-  seasonSelect.addEventListener("change", () => {
-    const selected = seasonSelect.value;
-    Array.from(resultsTable.querySelectorAll("tbody tr")).forEach(row => {
-      const year = new Date(row.cells[0].textContent).getFullYear();
-      if (selected === "all" || selected == year) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+    seasons.forEach(season => {
+      const option = document.createElement("option");
+      option.value = season;
+      option.textContent = season;
+      resultsSeasonSelect.appendChild(option);
     });
-
-    updateResultsChart();
-  });
-
-  /* ========================
-     CHART.JS PIE CHART
-     ======================== */
-  const ctx = document.getElementById("results-pie-chart").getContext("2d");
-  let resultsChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['Win', 'Loss', 'Tie'],
-      datasets: [{
-        data: [],
-        backgroundColor: ['#4caf50', '#f44336', '#ff9800'],
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' }
-      }
-    }
-  });
-
-  function updateResultsChart() {
-    const filteredRows = Array.from(resultsTable.querySelectorAll("tbody tr")).filter(r => r.style.display !== "none");
-    const counts = { Win:0, Loss:0, Tie:0 };
-
-    filteredRows.forEach(row => {
-      const result = row.cells[3].textContent.trim();
-      if (counts[result] !== undefined) counts[result]++;
-    });
-
-    resultsChart.data.datasets[0].data = [counts.Win, counts.Loss, counts.Tie];
-    resultsChart.update();
   }
 
-  updateResultsChart();
+  populateSeasons();
+
+  resultsSeasonSelect.addEventListener("change", () => {
+    const season = resultsSeasonSelect.value;
+    resultsTable.querySelectorAll("tr").forEach(tr => {
+      if (season === "all" || tr.children[0].textContent.startsWith(season)) {
+        tr.style.display = "";
+      } else {
+        tr.style.display = "none";
+      }
+    });
+  });
+
+  /* ===== SORTABLE TABLES ===== */
+  function makeSortable(table) {
+    const headers = table.querySelectorAll("th");
+    headers.forEach((th, index) => {
+      th.addEventListener("click", () => {
+        const type = th.dataset.type || "string";
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        const asc = !th.classList.contains("asc");
+        headers.forEach(h => h.classList.remove("asc", "desc"));
+        th.classList.add(asc ? "asc" : "desc");
+
+        rows.sort((a, b) => {
+          let valA = a.children[index].textContent.trim();
+          let valB = b.children[index].textContent.trim();
+
+          if (type === "number") {
+            valA = parseFloat(valA) || 0;
+            valB = parseFloat(valB) || 0;
+          } else if (type === "date") {
+            valA = new Date(valA);
+            valB = new Date(valB);
+          }
+
+          return asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+  }
+
+  document.querySelectorAll(".sortable-table").forEach(makeSortable);
+
+  /* ===== PLAYER DETAIL VIEW (optional) ===== */
+  const playerDetailView = document.querySelector("#player-detail-view");
+  const backBtn = document.querySelector("#player-detail-back");
+
+  backBtn?.addEventListener("click", () => {
+    playerDetailView.classList.add("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
 });
